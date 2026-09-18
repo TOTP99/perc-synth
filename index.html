@@ -533,43 +533,56 @@
     var osc = audioCtx.createOscillator();
     var g = audioCtx.createGain();
     osc.type = "sine";
-    osc.frequency.setValueAtTime(155, t);
-    osc.frequency.exponentialRampToValueAtTime(41, t + 0.12);
-    g.gain.setValueAtTime(0.95, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+    osc.frequency.setValueAtTime(185, t);
+    osc.frequency.exponentialRampToValueAtTime(38, t + 0.14);
+    g.gain.setValueAtTime(1.0, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.36);
     osc.connect(g).connect(out);
-    osc.start(t); osc.stop(t + 0.35);
+    osc.start(t); osc.stop(t + 0.38);
 
     var click = audioCtx.createBufferSource();
     click.buffer = noiseBuf;
     var cf = audioCtx.createBiquadFilter();
-    cf.type = "highpass"; cf.frequency.value = 1000;
+    cf.type = "bandpass"; cf.frequency.value = 1400; cf.Q.value = 0.9;
     var cg = audioCtx.createGain();
-    cg.gain.setValueAtTime(0.45, t);
-    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.018);
+    cg.gain.setValueAtTime(0.5, t);
+    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
     click.connect(cf).connect(cg).connect(out);
     click.start(t); click.stop(t + 0.03);
   }
 
   function playSnare(t, dest, vel) {
     var out = voiceBus(dest, vel);
+
     var noise = audioCtx.createBufferSource();
     noise.buffer = noiseBuf;
     var bp = audioCtx.createBiquadFilter();
-    bp.type = "bandpass"; bp.frequency.value = 1800; bp.Q.value = 0.8;
+    bp.type = "bandpass"; bp.frequency.value = 2000; bp.Q.value = 0.7;
     var ng = audioCtx.createGain();
-    ng.gain.setValueAtTime(0.55, t);
-    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.17);
+    ng.gain.setValueAtTime(0.5, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
     noise.connect(bp).connect(ng).connect(out);
-    noise.start(t); noise.stop(t + 0.2);
+    noise.start(t); noise.stop(t + 0.18);
 
-    var osc = audioCtx.createOscillator();
-    osc.type = "triangle"; osc.frequency.value = 190;
-    var og = audioCtx.createGain();
-    og.gain.setValueAtTime(0.35, t);
-    og.gain.exponentialRampToValueAtTime(0.001, t + 0.11);
-    osc.connect(og).connect(out);
-    osc.start(t); osc.stop(t + 0.12);
+    var sizzle = audioCtx.createBufferSource();
+    sizzle.buffer = noiseBuf;
+    var hp = audioCtx.createBiquadFilter();
+    hp.type = "highpass"; hp.frequency.value = 5500;
+    var hg = audioCtx.createGain();
+    hg.gain.setValueAtTime(0.22, t);
+    hg.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    sizzle.connect(hp).connect(hg).connect(out);
+    sizzle.start(t); sizzle.stop(t + 0.1);
+
+    [188, 224].forEach(function (f, i) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "triangle"; osc.frequency.value = f;
+      var og = audioCtx.createGain();
+      og.gain.setValueAtTime(i === 0 ? 0.3 : 0.22, t);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(og).connect(out);
+      osc.start(t); osc.stop(t + 0.11);
+    });
   }
 
   function playMetallic(t, dest, vel, decay, level) {
@@ -592,39 +605,45 @@
       osc.connect(master);
       osc.start(t); osc.stop(t + decay + 0.02);
     });
+
+    var noise = audioCtx.createBufferSource();
+    noise.buffer = noiseBuf;
+    var nf = audioCtx.createBiquadFilter();
+    nf.type = "highpass"; nf.frequency.value = 8000;
+    var ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(level * 0.35, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + decay * 0.6);
+    noise.connect(nf).connect(ng).connect(out);
+    noise.start(t); noise.stop(t + decay + 0.02);
   }
 
   function playWood(t, dest, vel) {
     var out = voiceBus(dest, vel);
-    var osc = audioCtx.createOscillator();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(1250, t);
-    osc.frequency.exponentialRampToValueAtTime(680, t + 0.035);
-    var g = audioCtx.createGain();
-    g.gain.setValueAtTime(0.75, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
-    var bp = audioCtx.createBiquadFilter();
-    bp.type = "bandpass"; bp.frequency.value = 950; bp.Q.value = 4.5;
-    osc.connect(bp).connect(g).connect(out);
-    osc.start(t); osc.stop(t + 0.08);
 
-    var body = audioCtx.createOscillator();
-    body.type = "sine";
-    body.frequency.setValueAtTime(210, t);
-    body.frequency.exponentialRampToValueAtTime(150, t + 0.045);
-    var bg = audioCtx.createGain();
-    bg.gain.setValueAtTime(0.55, t);
-    bg.gain.exponentialRampToValueAtTime(0.001, t + 0.055);
-    body.connect(bg).connect(out);
-    body.start(t); body.stop(t + 0.06);
+    // 木箱空腔共鸣：两个非谐波泛音（约2.65倍频比），起音略带下滑营造"梆"的敲击感
+    [
+      { freq: 520,  decay: 0.1,  gain: 0.62 },
+      { freq: 1380, decay: 0.06, gain: 0.3 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(p.freq * 1.18, t);
+      osc.frequency.exponentialRampToValueAtTime(p.freq, t + 0.018);
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.gain, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.decay);
+      osc.connect(g).connect(out);
+      osc.start(t); osc.stop(t + p.decay + 0.02);
+    });
 
+    // 敲击瞬态：短促带通噪声，模拟木槌触发的一下"哒"声
     var click = audioCtx.createBufferSource();
     click.buffer = noiseBuf;
     var cf = audioCtx.createBiquadFilter();
-    cf.type = "bandpass"; cf.frequency.value = 1600; cf.Q.value = 2.2;
+    cf.type = "bandpass"; cf.frequency.value = 2100; cf.Q.value = 1.6;
     var cg = audioCtx.createGain();
-    cg.gain.setValueAtTime(0.3, t);
-    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.012);
+    cg.gain.setValueAtTime(0.32, t);
+    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.014);
     click.connect(cf).connect(cg).connect(out);
     click.start(t); click.stop(t + 0.02);
   }
@@ -669,6 +688,16 @@
     sg.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
     strike.connect(sf).connect(sg).connect(out);
     strike.start(t); strike.stop(t + 0.03);
+
+    var sparkle = audioCtx.createBufferSource();
+    sparkle.buffer = noiseBuf;
+    var kf = audioCtx.createBiquadFilter();
+    kf.type = "highpass"; kf.frequency.value = 7000;
+    var kg = audioCtx.createGain();
+    kg.gain.setValueAtTime(0.16, t);
+    kg.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+    sparkle.connect(kf).connect(kg).connect(out);
+    sparkle.start(t); sparkle.stop(t + 0.05);
   }
 
   var PLAYERS = {
@@ -691,6 +720,33 @@
   var padsEl = document.getElementById("pads");
   var padElsById = {};
   var keyToPad = {};
+  var lastHitAt = {};
+  var rollTimers = {};
+  var ROLL_INTERVAL = 170; // 长按滚奏的间隔(ms)，约每秒6下
+
+  function hitPad(id) {
+    var now = Date.now();
+    if (now - (lastHitAt[id] || 0) < 45) return;
+    lastHitAt[id] = now;
+    ensureAudio();
+    if (!audioCtx) return;
+    playSound(id, audioCtx.currentTime, 1.0);
+    triggerPulse(padElsById[id]);
+  }
+
+  function startRoll(id) {
+    if (rollTimers[id]) return;
+    hitPad(id);
+    rollTimers[id] = setInterval(function () { hitPad(id); }, ROLL_INTERVAL);
+  }
+
+  function stopRoll(id) {
+    if (!rollTimers[id]) return;
+    clearInterval(rollTimers[id]);
+    delete rollTimers[id];
+  }
+
+  var activePointerPad = {};
 
   TRACKS.forEach(function (p) {
     var btn = document.createElement("button");
@@ -699,31 +755,40 @@
       '<img src="images/icon-' + p.id + '.webp" alt="' + p.label + '" width="128" height="128" loading="lazy">' +
       '<span class="name">' + p.label + "</span>";
     wirePulse(btn);
-    var lastHit = 0;
-    function hit() {
-      var now = Date.now();
-      if (now - lastHit < 50) return;
-      lastHit = now;
-      ensureAudio();
-      if (!audioCtx) return;
-      playSound(p.id, audioCtx.currentTime, 1.0);
-      triggerPulse(btn);
-    }
-    btn.addEventListener("pointerdown", hit);
-    btn.addEventListener("click", hit);
+    btn.addEventListener("pointerdown", function (e) {
+      activePointerPad[e.pointerId] = p.id;
+      startRoll(p.id);
+    });
+    btn.addEventListener("pointerleave", function () { stopRoll(p.id); });
+    btn.addEventListener("click", function () { hitPad(p.id); });
     padsEl.appendChild(btn);
     padElsById[p.id] = btn;
     keyToPad[p.key] = p.id;
+  });
+
+  ["pointerup", "pointercancel"].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      var id = activePointerPad[e.pointerId];
+      if (!id) return;
+      stopRoll(id);
+      delete activePointerPad[e.pointerId];
+    });
   });
 
   window.addEventListener("keydown", function (e) {
     if (e.repeat) return;
     var id = keyToPad[e.key];
     if (!id) return;
-    ensureAudio();
-    if (!audioCtx) return;
-    playSound(id, audioCtx.currentTime, 1.0);
-    triggerPulse(padElsById[id]);
+    startRoll(id);
+  });
+  window.addEventListener("keyup", function (e) {
+    var id = keyToPad[e.key];
+    if (!id) return;
+    stopRoll(id);
+  });
+  window.addEventListener("blur", function () {
+    Object.keys(rollTimers).forEach(stopRoll);
+    activePointerPad = {};
   });
 
   /* Mixer */
