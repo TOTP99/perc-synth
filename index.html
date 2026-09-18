@@ -162,7 +162,8 @@
   .subrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 10px; color: var(--text-dim); }
   .slots { display: flex; gap: 3px; }
   .slot-btn { width: 22px; height: 22px; border-radius: 5px; font-size: 10px; font-weight: 700; }
-  .feel-wrap { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 90px; }
+  .sub-gap { width: 8px; flex-shrink: 0; }
+  .feel-wrap { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 90px; margin-left: 4px; }
   .feel-wrap input[type="range"] { flex: 1; }
 
   details.mixer summary {
@@ -292,23 +293,24 @@
         <input type="range" id="tempo" min="60" max="168" value="96">
         <span id="tempoVal">96 拍/分</span>
       </div>
-      <button class="ghost-btn btn3d" id="randomBtn">随机</button>
-      <button class="ghost-btn btn3d" id="clearBtn">清空</button>
     </div>
 
     <div class="panel subrow">
       <span>图案</span>
       <div class="slots" id="slots"></div>
+      <span class="sub-gap"></span>
+      <button class="ghost-btn btn3d" id="randomBtn">随机</button>
+      <button class="ghost-btn btn3d" id="clearBtn">清空</button>
+      <button class="ghost-btn btn3d" id="humanizeBtn">人性化</button>
       <div class="feel-wrap">
         <label for="swing">摇摆</label>
         <input type="range" id="swing" min="0" max="50" value="0">
         <span id="swingVal">0%</span>
       </div>
-      <button class="ghost-btn btn3d" id="humanizeBtn">人性化</button>
     </div>
 
     <details class="panel mixer">
-      <summary>混音与音色</summary>
+      <summary>混音与音色 ⚙️</summary>
       <div class="mixer-grid" id="mixerGrid"></div>
     </details>
 
