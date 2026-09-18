@@ -117,36 +117,27 @@
   .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .pad {
     --glow: var(--bronze-mid);
-    position: relative; aspect-ratio: 1.35; border-radius: 8px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 1px; padding: 4px 2px 3px;
-    border: 1px solid rgba(100,120,70,0.3);
-    box-shadow: 0 2px 0 rgba(40,30,15,0.55), 0 2px 6px rgba(0,0,0,.35), inset 0 1px 0 var(--hi);
+    position: relative; aspect-ratio: 1.55; border-radius: 10px;
+    display: block; overflow: hidden; padding: 0;
+    border: none;
+    box-shadow: 0 2px 0 rgba(40,30,15,0.55), 0 3px 8px rgba(0,0,0,.4);
     transition: transform .07s ease, box-shadow .07s ease; touch-action: manipulation;
+    background: transparent;
   }
   .pad img {
-    width: 62%; height: auto; max-height: 68%;
-    object-fit: contain; pointer-events: none;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,.35));
+    display: block; width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    pointer-events: none;
   }
   .pad .kbd {
-    position: absolute; top: 3px; left: 5px; z-index: 1;
-    font-size: 9px; font-weight: 700; color: rgba(30,24,12,0.5);
+    position: absolute; top: 4px; left: 6px; z-index: 1;
+    font-size: 10px; font-weight: 700; color: rgba(40,30,15,0.45);
   }
-  .pad .name { font-size: 9px; font-weight: 700; color: #2a1c08; }
+  .pad .name { display: none; }
   .pad:active { transform: translateY(1px) scale(0.97); }
-  .pad.bell {
-    --glow: var(--bronze-mid);
-    background: radial-gradient(circle at 30% 25%, #c9b070, var(--bronze-low) 120%);
-  }
-  .pad.wood {
-    --glow: var(--wood);
-    background: linear-gradient(160deg, #c49858, var(--wood) 130%);
-  }
-  .pad.drum {
-    --glow: var(--red);
-    background: linear-gradient(160deg, #b86858, var(--red) 130%);
-  }
+  .pad.bell { --glow: var(--bronze-mid); }
+  .pad.wood { --glow: var(--wood); }
+  .pad.drum { --glow: var(--red); }
 
   @keyframes ringPulse {
     0%   { box-shadow: 0 0 0 0 var(--glow), 0 2px 0 rgba(0,0,0,.2); }
