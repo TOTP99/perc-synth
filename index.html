@@ -30,7 +30,11 @@
     --focus: #a8b870;
   }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * {
+    box-sizing: border-box; -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; -moz-user-select: none; user-select: none;
+  }
   html, body { margin: 0; padding: 0; }
   html { height: 100%; }
   body {
@@ -53,7 +57,11 @@
     color: var(--text-dim); font-size: 10px; margin: 0 0 10px; text-align: center;
     transition: font-size .3s ease, margin .3s ease, opacity .3s ease;
   }
-  button { font-family: inherit; border: none; cursor: pointer; color: var(--text); background: none; }
+  button {
+    font-family: inherit; border: none; cursor: pointer; color: var(--text); background: none;
+    touch-action: manipulation;
+  }
+  img { -webkit-user-drag: none; user-drag: none; }
   button:focus-visible, .step:focus-visible, input:focus-visible {
     outline: 1.5px solid var(--focus); outline-offset: 1px;
   }
@@ -128,10 +136,6 @@
     display: block; width: 100%; height: 100%;
     object-fit: cover; object-position: center;
     pointer-events: none;
-  }
-  .pad .kbd {
-    position: absolute; top: 4px; left: 6px; z-index: 1;
-    font-size: 10px; font-weight: 700; color: rgba(40,30,15,0.45);
   }
   .pad .name { display: none; }
   .pad:active { transform: translateY(1px) scale(0.97); }
@@ -282,7 +286,6 @@
     .pads { gap: 4px; }
     .pad { aspect-ratio: 1.55; border-radius: 6px; }
     .pad .name { font-size: 8px; padding: 1px 0 2px; }
-    .pad .kbd { font-size: 8px; top: 2px; left: 4px; }
     #playBtn { width: 28px; height: 28px; font-size: 11px; }
     .ghost-btn { padding: 4px 7px; font-size: 9px; }
     .slot-btn { width: 20px; height: 20px; font-size: 9px; }
@@ -362,6 +365,9 @@
 <script>
 (function () {
   "use strict";
+
+  document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  document.addEventListener("dragstart", function (e) { e.preventDefault(); });
 
   var NUM_STEPS = 16;
   var NUM_SLOTS = 4;
