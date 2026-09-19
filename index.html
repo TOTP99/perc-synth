@@ -340,9 +340,9 @@
       <span class="sub-gap"></span>
       <button class="ghost-btn btn3d" id="randomBtn">随机</button>
       <button class="ghost-btn btn3d" id="clearBtn">清空</button>
-      <button class="ghost-btn btn3d" id="humanizeBtn">人性化</button>
+      <button class="ghost-btn btn3d" id="humanizeBtn">灵感</button>
       <div class="feel-wrap">
-        <label for="swing">摇摆</label>
+        <label for="swing">律动</label>
         <input type="range" id="swing" min="0" max="50" value="0">
         <span id="swingVal">0%</span>
       </div>
@@ -492,7 +492,15 @@
     noiseBuf = makeNoiseBuffer();
     masterGain = audioCtx.createGain();
     masterGain.gain.value = state.masterVol > 0 ? state.masterVol : 0.9;
-    masterGain.connect(audioCtx.destination);
+    /* 总线限幅：多轨叠加（钟/镲/鼓）时防止爆音 */
+    var limiter = audioCtx.createDynamicsCompressor();
+    limiter.threshold.value = -8;
+    limiter.knee.value = 10;
+    limiter.ratio.value = 6;
+    limiter.attack.value = 0.002;
+    limiter.release.value = 0.12;
+    masterGain.connect(limiter);
+    limiter.connect(audioCtx.destination);
     TRACKS.forEach(function (t) {
       var g = audioCtx.createGain();
       var vol = state.trackVol[t.id];
@@ -760,7 +768,8 @@
       startRoll(p.id);
     });
     btn.addEventListener("pointerleave", function () { stopRoll(p.id); });
-    btn.addEventListener("click", function () { hitPad(p.id); });
+    /* 鼠标/触摸已由 pointerdown 触发；click 只处理键盘激活(detail===0)，避免点一下敲两声 */
+    btn.addEventListener("click", function (e) { if (e.detail === 0) hitPad(p.id); });
     padsEl.appendChild(btn);
     padElsById[p.id] = btn;
     keyToPad[p.key] = p.id;
@@ -987,6 +996,11 @@
   }
 
   function scheduler() {
+    /* 定时器被系统拖慢后已落后于当前时间：直接对齐，不补播，避免"爆发" */
+    if (nextStepTime < audioCtx.currentTime - 0.05) {
+      nextStepTime = audioCtx.currentTime + 0.05;
+      noteQueue = [];
+    }
     while (nextStepTime < audioCtx.currentTime + scheduleAhead) {
       scheduleStep(currentStep, nextStepTime);
       advanceStep();
@@ -1036,6 +1050,11 @@
     playBtn.setAttribute("aria-label", "播放");
   }
 
+  /* 页面切到后台时暂停序列器：后台定时器会被限速，继续播放只会断断续续 */
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && isPlaying) stopSeq();
+  });
+
   wirePulse(playBtn);
   var lastToggle = 0;
   function togglePlay() {
@@ -1046,8 +1065,12 @@
     triggerPulse(playBtn);
     if (isPlaying) stopSeq(); else startSeq();
   }
-  playBtn.addEventListener("pointerdown", togglePlay);
-  playBtn.addEventListener("click", togglePlay);
+  playBtn.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    togglePlay();
+  });
+  /* click 只处理键盘激活(detail===0)，避免 pointerdown + click 连切两次 */
+  playBtn.addEventListener("click", function (e) { if (e.detail === 0) togglePlay(); });
 
   document.getElementById("clearBtn").addEventListener("click", function () {
     var slot = activeSlot();
