@@ -385,13 +385,29 @@
   #playBtn:active { transform: translateY(2px); box-shadow: 0 0 0 #120b06, inset 0 2px 4px rgba(0,0,0,.4); }
   #playBtn .pause-bars { display: flex; gap: 3px; align-items: center; }
   #playBtn .pause-bars i { display: block; width: 3px; height: 11px; border-radius: 1px; background: var(--gold-text-1); }
-  #recBtn.on { color: #e8e0c8; border-color: #a03828; }
-  #recBtn .dot {
-    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: #5a5a5a; margin-right: 4px; vertical-align: 1px;
+  #composeBtn.on { color: #f5d67b; border-color: #b8862f; }
+  /* 曲谱 */
+  .score-strip {
+    display: flex; gap: 4px; overflow-x: auto; align-items: center;
+    min-height: 30px; max-height: 78px; padding: 4px 2px;
+    -webkit-overflow-scrolling: touch;
   }
-  #recBtn.on .dot { background: #e04030; animation: blink 1s infinite; }
-  @keyframes blink { 50% { opacity: 0.25; } }
+  .score-strip:empty::after {
+    content: "还没有音符 — 点「创作」开始记谱";
+    font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; white-space: nowrap;
+  }
+  .score-chip {
+    flex: 0 0 auto; font-size: 10px; line-height: 1; padding: 6px 8px;
+    border-radius: 9px; border: 1px solid var(--bronze-low); border-left-width: 3px;
+    background: rgba(216,180,90,.08); color: var(--text); cursor: pointer;
+  }
+  .score-chip.sc-bell { border-left-color: #d8b45a; }
+  .score-chip.sc-wood { border-left-color: #c89050; }
+  .score-chip.sc-drum { border-left-color: #c07060; }
+  .score-chip.sc-bowl { border-left-color: #d8ab5e; }
+  .score-chip.hit { background: rgba(216,180,90,.45); }
+  .score-actions { display: flex; gap: 8px; margin-top: 6px; }
+  .score-hint { font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; margin: 6px 0 0; }
   .tempo-wrap { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 110px; }
   .tempo-wrap label { font-size: 10px; color: var(--text-dim); white-space: nowrap; }
   .tempo-wrap input[type="range"] { flex: 1; }
@@ -740,7 +756,7 @@
 
       <div class="panel transport">
         <button id="playBtn" aria-label="播放">▶</button>
-        <button class="ghost-btn btn3d" id="recBtn" aria-label="录音"><span class="dot"></span>录音</button>
+        <button class="ghost-btn btn3d" id="composeBtn" aria-label="创作">创作</button>
         <div class="tempo-wrap">
           <label for="tempo">速度</label>
           <input type="range" id="tempo" min="60" max="168" value="96">
@@ -766,6 +782,16 @@
         </div>
       </div>
 
+      <div class="panel">
+        <p class="section-label">曲谱 <span id="scoreCount"></span></p>
+        <div class="score-strip" id="scoreStrip" aria-label="曲谱"></div>
+        <div class="score-actions">
+          <button class="ghost-btn btn3d" id="scorePlayBtn">播放曲谱</button>
+          <button class="ghost-btn btn3d" id="scoreClearBtn">清空曲谱</button>
+        </div>
+        <p class="score-hint" id="scoreHint">点「创作」后敲鼓垫，音符会记在这里</p>
+      </div>
+
       <details class="panel mixer">
         <summary>混音与音色</summary>
         <div class="mixer-grid" id="mixerGrid"></div>
@@ -779,7 +805,7 @@
     </section>
   </div>
 
-  <footer>晨钟暮鼓 · 功德无量<span class="foot-sub">节拍每四步分组 · A/B/C/D · 速度、混音与功德保存在本机 · 预置锣鼓点为风格化编配 · TP 制作</span></footer>
+  <footer>晨钟暮鼓 · 功德无量<span class="foot-sub">节拍每四步分组 · A/B/C · 速度、混音与功德保存在本机 · 预置锣鼓点为风格化编配 · TP 制作</span></footer>
   <div class="toast" id="toast"></div>
 
 <script>
@@ -790,8 +816,8 @@
   document.addEventListener("dragstart", function (e) { e.preventDefault(); });
 
   var NUM_STEPS = 16;
-  var NUM_SLOTS = 4;
-  var SLOT_NAMES = ["A", "B", "C", "D"];
+  var NUM_SLOTS = 3;
+  var SLOT_NAMES = ["A", "B", "C"];
   var STORE_KEY = "zhonggulou-v1";
   var LEGACY_KEY = "perc-synth-v2";
 
@@ -873,14 +899,15 @@
     bellDecay: 1.0,
     swing: 0,
     humanize: false,
-    merit: { total: 0, day: "", dayCount: 0, maxCombo: 0 }
+    merit: { total: 0, day: "", dayCount: 0, maxCombo: 0 },
+    score: []
   };
   for (var s = 0; s < NUM_SLOTS; s++) state.slots.push({ tempo: 96, steps: emptySteps() });
   TRACKS.forEach(function (t) { state.trackVol[t.id] = 1.0; });
 
   function applyLoadedSlots(p) {
-    if (Array.isArray(p.slots) && p.slots.length === NUM_SLOTS) {
-      state.slots = p.slots.map(function (slot) {
+    if (Array.isArray(p.slots) && p.slots.length >= NUM_SLOTS) {
+      state.slots = p.slots.slice(0, NUM_SLOTS).map(function (slot) {
         var steps = emptySteps();
         if (slot && slot.steps) {
           TRACKS.forEach(function (t) {
@@ -896,10 +923,21 @@
     if (typeof p.swing === "number") state.swing = p.swing;
     if (typeof p.humanize === "boolean") state.humanize = p.humanize;
     if (typeof p.activeSlot === "number") state.activeSlot = p.activeSlot;
+    if (state.activeSlot > NUM_SLOTS - 1) state.activeSlot = 0;
     if (p.trackVol) {
       TRACKS.forEach(function (t) {
         if (typeof p.trackVol[t.id] === "number")
           state.trackVol[t.id] = Math.max(0.1, p.trackVol[t.id]);
+      });
+    }
+    if (Array.isArray(p.score)) {
+      var okIds = {};
+      TRACKS.forEach(function (t) { okIds[t.id] = true; });
+      state.score = p.score.filter(function (n) {
+        return n && okIds[n.id];
+      }).slice(0, 2000).map(function (n) {
+        var dt = +n.dt || 0;
+        return { id: n.id, dt: Math.max(0, Math.min(3000, dt)) };
       });
     }
   }
@@ -979,7 +1017,6 @@
 
   /* Audio */
   var audioCtx = null, noiseBuf = null, masterGain = null, trackGains = {};
-  var recDest = null;
 
   function makeNoiseBuffer() {
     var len = audioCtx.sampleRate;
@@ -1006,11 +1043,6 @@
     limiter.release.value = 0.12;
     masterGain.connect(limiter);
     limiter.connect(audioCtx.destination);
-    /* 录音分流：从限幅后取信号，不影响监听 */
-    try {
-      recDest = audioCtx.createMediaStreamDestination();
-      limiter.connect(recDest);
-    } catch (e) { recDest = null; }
     TRACKS.forEach(function (t) {
       var g = audioCtx.createGain();
       var vol = state.trackVol[t.id];
@@ -1640,66 +1672,6 @@
     }, "image/png");
   });
 
-  /* ---------- 录音 ---------- */
-  var recBtn = document.getElementById("recBtn");
-  var mediaRec = null, recChunks = [], isRec = false;
-
-  function pickMime() {
-    if (!window.MediaRecorder) return null;
-    var list = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
-    for (var i = 0; i < list.length; i++) {
-      try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch (e) {}
-    }
-    return null;
-  }
-
-  function setRecUI(on) {
-    isRec = on;
-    recBtn.classList.toggle("on", on);
-    recBtn.innerHTML = on ? '<span class="dot"></span>停止' : '<span class="dot"></span>录音';
-  }
-
-  function finishRec() {
-    setRecUI(false);
-    if (!recChunks.length) { toast("没有录到声音"); return; }
-    var blob = new Blob(recChunks, { type: mediaRec.mimeType || "audio/webm" });
-    var ext = (mediaRec.mimeType || "").indexOf("mp4") >= 0 ? "m4a" : "webm";
-    var file = new File([blob], "zhonggulou-" + Date.now() + "." + ext, { type: blob.type });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file], title: "钟鼓楼·录音" }).catch(function () {});
-    } else {
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = file.name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-      toast("录音已下载");
-    }
-    recChunks = [];
-  }
-
-  recBtn.addEventListener("click", function () {
-    if (isRec) {
-      try { mediaRec.stop(); } catch (e) { setRecUI(false); }
-      return;
-    }
-    ensureAudio();
-    if (!audioCtx || !recDest) { toast("音频尚未就绪"); return; }
-    var mime = pickMime();
-    if (!mime) { toast("当前浏览器不支持录音"); return; }
-    recChunks = [];
-    try {
-      mediaRec = new MediaRecorder(recDest.stream, { mimeType: mime });
-    } catch (e) { toast("录音启动失败"); return; }
-    mediaRec.ondataavailable = function (e) { if (e.data && e.data.size) recChunks.push(e.data); };
-    mediaRec.onstop = finishRec;
-    mediaRec.start();
-    setRecUI(true);
-    toast("录音中，再点一次停止");
-  });
-
   /* ---------- 鼓垫（图片 + CSS 回退） ---------- */
   var padsEl = document.getElementById("pads");
   var padElsById = {};
@@ -1716,6 +1688,7 @@
     if (!audioCtx) return;
     playSound(id, audioCtx.currentTime, 1.0);
     triggerPulse(padElsById[id]);
+    writeScore(id);
   }
 
   function startRoll(id) {
@@ -1789,6 +1762,118 @@
     Object.keys(rollTimers).forEach(stopRoll);
     activePointerPad = {};
   });
+
+  /* ---------- 创作与曲谱 ---------- */
+  var composeBtn = document.getElementById("composeBtn");
+  var scoreStrip = document.getElementById("scoreStrip");
+  var scoreCount = document.getElementById("scoreCount");
+  var scorePlayBtn = document.getElementById("scorePlayBtn");
+  var scoreClearBtn = document.getElementById("scoreClearBtn");
+  var scoreHint = document.getElementById("scoreHint");
+  var SCORE_MAX = 2000, SCORE_GAP_MAX = 3000;
+  var isCompose = false, lastScoreAt = 0;
+  var scoreTimers = [], scorePlaying = false, chipEls = [];
+
+  function trackOf(id) {
+    for (var i = 0; i < TRACKS.length; i++) if (TRACKS[i].id === id) return TRACKS[i];
+    return null;
+  }
+
+  function setCompose(on) {
+    isCompose = on;
+    composeBtn.classList.toggle("on", on);
+    composeBtn.textContent = on ? "创作中" : "创作";
+    scoreHint.textContent = on ? "创作中 — 敲鼓垫即记谱，再点一次结束" : "点「创作」后敲鼓垫，音符会记在这里";
+    if (on) { ensureAudio(); lastScoreAt = 0; }
+    else stopScorePlay();
+  }
+  composeBtn.addEventListener("click", function () { setCompose(!isCompose); });
+
+  /* 创作模式下鼓垫每次击发记一笔；步进器/预置走 playSound 直发，天然写不进来 */
+  function writeScore(id) {
+    if (!isCompose || scorePlaying) return;
+    if (state.score.length >= SCORE_MAX) { toast("曲谱已满（" + SCORE_MAX + " 个音）"); return; }
+    var now = Date.now();
+    var dt = lastScoreAt ? Math.min(now - lastScoreAt, SCORE_GAP_MAX) : 0;
+    lastScoreAt = now;
+    state.score.push({ id: id, dt: dt });
+    appendScoreChip(id, true);
+    updateScoreCount();
+    persist();
+  }
+
+  function appendScoreChip(id, scroll) {
+    var t = trackOf(id);
+    var chip = document.createElement("button");
+    chip.className = "score-chip sc-" + (t ? t.shape : "drum");
+    chip.textContent = t ? t.label : id;
+    chip.setAttribute("aria-label", "试听" + chip.textContent);
+    chip.addEventListener("click", function () {
+      ensureAudio(); if (!audioCtx) return;
+      try { playSound(id, audioCtx.currentTime, 1.0); } catch (e) {}
+      chip.classList.add("hit");
+      setTimeout(function () { chip.classList.remove("hit"); }, 220);
+    });
+    scoreStrip.appendChild(chip);
+    chipEls.push(chip);
+    if (scroll) scoreStrip.scrollLeft = scoreStrip.scrollWidth;
+  }
+
+  function updateScoreCount() {
+    scoreCount.textContent = state.score.length ? "· " + state.score.length + " 个音" : "";
+  }
+
+  function renderScore() {
+    scoreStrip.innerHTML = "";
+    chipEls = [];
+    state.score.forEach(function (n) { appendScoreChip(n.id, false); });
+    updateScoreCount();
+    scoreStrip.scrollLeft = scoreStrip.scrollWidth;
+  }
+
+  function flashScoreChip(i) {
+    var chip = chipEls[i];
+    if (!chip) return;
+    chip.classList.add("hit");
+    setTimeout(function () { chip.classList.remove("hit"); }, 240);
+    scoreStrip.scrollLeft = Math.max(0, chip.offsetLeft - scoreStrip.clientWidth / 2);
+  }
+
+  function stopScorePlay() {
+    scoreTimers.forEach(function (t) { clearTimeout(t); });
+    scoreTimers = [];
+    if (scorePlaying) { scorePlaying = false; scorePlayBtn.textContent = "播放曲谱"; }
+  }
+
+  function playScore() {
+    if (scorePlaying) { stopScorePlay(); return; }
+    if (!state.score.length) { toast("曲谱是空的，先点「创作」记谱"); return; }
+    ensureAudio(); if (!audioCtx) return;
+    scorePlaying = true;
+    scorePlayBtn.textContent = "停止";
+    var ahead = 150, acc = 0;
+    state.score.forEach(function (n, i) {
+      if (i > 0) acc += n.dt;
+      (function (id, ms, idx) {
+        scoreTimers.push(setTimeout(function () {
+          try { playSound(id, audioCtx.currentTime, 1.0); } catch (e) {}
+          flashScoreChip(idx);
+        }, ms));
+      })(n.id, ahead + acc, i);
+    });
+    scoreTimers.push(setTimeout(stopScorePlay, ahead + acc + 1000));
+  }
+  scorePlayBtn.addEventListener("click", playScore);
+
+  scoreClearBtn.addEventListener("click", function () {
+    stopScorePlay();
+    state.score = [];
+    renderScore();
+    persist();
+    toast("曲谱已清空");
+  });
+
+  renderScore();
 
   /* Mixer */
   var mixerGrid = document.getElementById("mixerGrid");
