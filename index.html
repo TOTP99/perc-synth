@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>编钟 · 木鱼 · 鼓</title>
+<title>钟鼓楼 · 国风打击乐</title>
 <style>
   :root {
-    /* 青铜器：暗底 + 铜绿锈 + 鎏金高光 */
+    /* 青铜器：暗底 + 铜绿锈 + 鎏金高光（沿用原主题） */
     --page-bg: #1a1814;
     --case-1: #7a6a42;
     --case-2: #5a4c30;
@@ -49,21 +49,40 @@
   }
   h1 {
     font-family: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
-    font-weight: 600; font-size: 18px; letter-spacing: 0.06em;
+    font-weight: 600; font-size: 20px; letter-spacing: 0.14em;
     margin: 0 0 1px; text-align: center; color: var(--bronze-high);
     transition: font-size .3s ease, margin .3s ease;
   }
   .tagline {
-    color: var(--text-dim); font-size: 10px; margin: 0 0 10px; text-align: center;
+    color: var(--text-dim); font-size: 10px; margin: 0 0 8px; text-align: center;
+    letter-spacing: 0.2em;
     transition: font-size .3s ease, margin .3s ease, opacity .3s ease;
   }
   button {
     font-family: inherit; border: none; cursor: pointer; color: var(--text); background: none;
     touch-action: manipulation;
   }
-  img { -webkit-user-drag: none; user-drag: none; }
   button:focus-visible, .step:focus-visible, input:focus-visible {
     outline: 1.5px solid var(--focus); outline-offset: 1px;
+  }
+
+  /* 模式切换 */
+  .mode-switch {
+    display: flex; gap: 6px; justify-content: center; margin: 0 0 10px;
+  }
+  .mode-btn {
+    flex: 0 1 150px; padding: 7px 0; font-size: 13px; letter-spacing: 0.3em; text-indent: 0.3em;
+    border-radius: 8px;
+    background: linear-gradient(160deg, var(--case-1), var(--case-2));
+    border: 1px solid var(--border); color: var(--text-dim);
+    box-shadow: 0 2px 0 var(--case-3), 0 2px 4px rgba(0,0,0,.3), inset 0 1px 0 var(--hi);
+    transition: transform .07s ease, box-shadow .07s ease, color .15s;
+  }
+  .mode-btn.on {
+    background: linear-gradient(160deg, var(--bronze-high), var(--bronze-low));
+    color: #241a08;
+    box-shadow: 0 0 0 var(--case-3), inset 0 2px 3px rgba(0,0,0,.3);
+    transform: translateY(1px);
   }
 
   .unit {
@@ -103,6 +122,7 @@
     padding: 8px; margin-bottom: 6px;
     transition: padding .3s ease, margin .3s ease;
   }
+  .section-label { font-size: 10px; color: var(--text-dim); margin: 0 0 5px; letter-spacing: 0.1em; }
 
   .btn3d {
     background: linear-gradient(160deg, var(--case-1), var(--case-2));
@@ -121,27 +141,89 @@
     transform: translateY(1px);
   }
 
-  .pads-panel .section-label { font-size: 10px; color: var(--text-dim); margin: 0 0 5px; }
+  /* ---------- 木鱼模式 ---------- */
+  #view-muyu { text-align: center; }
+  .merit-board {
+    display: flex; justify-content: center; gap: 18px; margin: 2px 0 8px;
+  }
+  .merit-item { min-width: 76px; }
+  .merit-num {
+    font-size: 26px; font-weight: 700; color: var(--bronze-high);
+    font-variant-numeric: tabular-nums; line-height: 1.2;
+  }
+  .merit-cap { font-size: 9px; color: var(--text-dim); letter-spacing: 0.2em; }
+  .muyu-stage { position: relative; display: inline-block; margin: 4px 0 2px; }
+  .muyu-fish {
+    width: 210px; height: 210px; border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 28%, #d89a58, var(--wood) 55%, #4a2e16 100%);
+    border: 3px solid rgba(201,168,74,0.55);
+    box-shadow:
+      0 8px 18px rgba(0,0,0,.5),
+      inset 0 2px 6px rgba(255,220,160,.35),
+      inset 0 -8px 18px rgba(0,0,0,.45);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 2px;
+    transition: transform .06s ease;
+    touch-action: manipulation;
+  }
+  .muyu-fish:active { transform: scale(0.94); }
+  .muyu-fish::before {
+    /* 鱼嘴一线 */
+    content: ""; position: absolute; left: 18%; right: 18%; top: 50%;
+    height: 5px; border-radius: 3px; background: rgba(30,18,8,0.55);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.6);
+  }
+  .muyu-fish .mu-char {
+    font-family: "Songti SC", "STSong", serif;
+    font-size: 44px; color: rgba(40,24,10,0.85); font-weight: 700;
+    text-shadow: 0 1px 0 rgba(255,220,160,.35);
+    z-index: 1;
+  }
+  .muyu-fish .mu-hint { font-size: 9px; color: rgba(40,24,10,0.6); z-index: 1; letter-spacing: 0.2em; }
+  .float-plus {
+    position: absolute; left: 50%; top: 18%;
+    font-size: 22px; font-weight: 700; color: var(--bronze-high);
+    text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    pointer-events: none; z-index: 5;
+    animation: floatUp 0.8s ease-out forwards;
+  }
+  @keyframes floatUp {
+    0% { opacity: 0; transform: translate(-50%, 10px) scale(0.7); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -46px) scale(1.1); }
+  }
+  .combo-line { min-height: 16px; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; margin: 2px 0 6px; }
+  .muyu-actions { display: flex; gap: 8px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
+  .muyu-actions .ghost-btn { padding: 7px 14px; font-size: 11px; letter-spacing: 0.1em; }
+
+  /* ---------- 鼓垫（CSS 绘制，不依赖图片） ---------- */
   .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .pad {
     --glow: var(--bronze-mid);
-    position: relative; aspect-ratio: 1.55; border-radius: 10px;
-    display: block; overflow: hidden; padding: 0;
-    border: none;
-    box-shadow: 0 2px 0 rgba(40,30,15,0.55), 0 3px 8px rgba(0,0,0,.4);
+    position: relative; aspect-ratio: 1.35; border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    padding: 0; overflow: hidden;
+    background:
+      radial-gradient(circle at 32% 26%, rgba(216,200,140,0.16), transparent 55%),
+      linear-gradient(165deg, var(--panel-1), var(--panel-2));
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 0 rgba(40,30,15,0.55), 0 3px 8px rgba(0,0,0,.4), inset 0 1px 0 var(--hi);
     transition: transform .07s ease, box-shadow .07s ease; touch-action: manipulation;
-    background: transparent;
   }
-  .pad img {
-    display: block; width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    pointer-events: none;
+  .pad .num {
+    font-size: 19px; font-weight: 700; color: var(--bronze-high);
+    font-variant-numeric: tabular-nums; line-height: 1;
   }
-  .pad .name { display: none; }
+  .pad .name { font-size: 9px; color: var(--text-dim); letter-spacing: 0.08em; }
   .pad:active { transform: translateY(1px) scale(0.97); }
   .pad.bell { --glow: var(--bronze-mid); }
+  .pad.bell .num { color: var(--bronze-high); }
   .pad.wood { --glow: var(--wood); }
+  .pad.wood .num { color: #c89050; }
   .pad.drum { --glow: var(--red); }
+  .pad.drum .num { color: #c07060; }
 
   @keyframes ringPulse {
     0%   { box-shadow: 0 0 0 0 var(--glow), 0 2px 0 rgba(0,0,0,.2); }
@@ -161,6 +243,13 @@
   #playBtn:active { transform: translateY(2px); box-shadow: 0 0 0 #6a2818, inset 0 2px 3px rgba(0,0,0,.35); }
   #playBtn .pause-bars { display: flex; gap: 3px; align-items: center; }
   #playBtn .pause-bars i { display: block; width: 3px; height: 11px; border-radius: 1px; background: #2a0c08; }
+  #recBtn.on { color: #e8e0c8; border-color: #a03828; }
+  #recBtn .dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #5a5a5a; margin-right: 4px; vertical-align: 1px;
+  }
+  #recBtn.on .dot { background: #e04030; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.25; } }
   .tempo-wrap { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 110px; }
   .tempo-wrap label { font-size: 10px; color: var(--text-dim); white-space: nowrap; }
   .tempo-wrap input[type="range"] { flex: 1; }
@@ -173,6 +262,21 @@
   .sub-gap { width: 8px; flex-shrink: 0; }
   .feel-wrap { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 90px; margin-left: 4px; }
   .feel-wrap input[type="range"] { flex: 1; }
+
+  /* 预置锣鼓点 */
+  .preset-scroll {
+    display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .preset-chip {
+    flex-shrink: 0; padding: 6px 12px; font-size: 11px; letter-spacing: 0.08em;
+    border-radius: 14px;
+    background: linear-gradient(160deg, var(--case-1), var(--case-2));
+    border: 1px solid var(--border); color: var(--text);
+    box-shadow: 0 2px 0 var(--case-3), inset 0 1px 0 var(--hi);
+  }
+  .preset-chip:active { transform: translateY(1px); box-shadow: 0 0 0 var(--case-3); }
+  .preset-chip small { display: block; font-size: 8px; color: var(--text-dim); letter-spacing: 0; }
 
   details.mixer summary {
     cursor: pointer; font-size: 10px; color: var(--text-dim); list-style: none;
@@ -261,15 +365,25 @@
     --glow: var(--wood);
     background: radial-gradient(circle at 32% 28%, #c89050, var(--wood) 140%);
     border-color: var(--wood);
-    box-shadow: 0 0 5px var(--wood), 0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 var(--hi);
+    box-shadow: 0 0 5px var(--wood), 0 1px 2px rgba(0,0,0,.3), inset 0 0 1px var(--hi);
   }
   .step.active.drum {
     --glow: var(--red);
     background: radial-gradient(circle at 32% 28%, #c07060, var(--red) 140%);
     border-color: var(--red);
-    box-shadow: 0 0 5px var(--red), 0 1px 2px rgba(0,0,0,.3), inset 0 1px 0 var(--hi);
+    box-shadow: 0 0 5px var(--red), 0 1px 2px rgba(0,0,0,.3), inset 0 0 1px var(--hi);
   }
   .step.playhead { box-shadow: 0 0 0 1.5px var(--text), 0 0 6px var(--glow); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(8px);
+    background: rgba(20,16,10,0.92); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 11px; padding: 8px 14px; letter-spacing: 0.06em;
+    opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s;
+    z-index: 9999; max-width: 86vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   footer {
     margin-top: 10px; font-size: 9px; color: var(--text-dim); line-height: 1.5; text-align: center;
@@ -278,14 +392,16 @@
 
   @media (orientation: landscape) {
     body { padding: 6px 10px 10px; max-width: 920px; }
-    h1 { font-size: 15px; margin: 0; }
+    h1 { font-size: 16px; margin: 0; }
     .tagline { font-size: 9px; margin: 0 0 6px; }
+    .mode-switch { margin: 0 0 6px; }
+    .mode-btn { padding: 5px 0; font-size: 12px; }
     .unit { padding: 8px 10px 8px; border-radius: 12px; }
     .panel { padding: 6px 8px; margin-bottom: 5px; }
-    .pads-panel .section-label { margin: 0 0 4px; font-size: 9px; }
     .pads { gap: 4px; }
     .pad { aspect-ratio: 1.55; border-radius: 6px; }
-    .pad .name { font-size: 8px; padding: 1px 0 2px; }
+    .pad .num { font-size: 15px; }
+    .pad .name { font-size: 8px; }
     #playBtn { width: 28px; height: 28px; font-size: 11px; }
     .ghost-btn { padding: 4px 7px; font-size: 9px; }
     .slot-btn { width: 20px; height: 20px; font-size: 9px; }
@@ -293,16 +409,25 @@
     .step { height: 18px; }
     .sequencer { grid-template-columns: 42px repeat(16, minmax(18px, 1fr)); gap: 3px; min-width: 420px; }
     .row-label { font-size: 8px; }
+    /* 木鱼横屏：左右并列 */
+    #view-muyu .muyu-cols { display: flex; align-items: center; gap: 12px; }
+    #view-muyu .muyu-left { flex: 1; }
+    #view-muyu .muyu-right { flex: 1; }
+    .muyu-fish { width: 170px; height: 170px; }
+    .muyu-fish .mu-char { font-size: 36px; }
     footer { margin-top: 6px; font-size: 8px; opacity: 0.85; }
   }
   @media (orientation: landscape) and (max-height: 500px) {
     body { padding: 4px 8px 6px; }
     h1 { font-size: 13px; }
     .tagline { display: none; }
+    .mode-switch { margin: 0 0 4px; }
     .unit { padding: 6px 8px; }
     .panel { padding: 5px 6px; margin-bottom: 4px; }
     .pad { aspect-ratio: 1.7; }
     .step { height: 16px; }
+    .muyu-fish { width: 140px; height: 140px; }
+    .muyu-fish .mu-char { font-size: 30px; }
     footer { display: none; }
   }
   @media (orientation: portrait) and (max-width: 400px) {
@@ -313,54 +438,106 @@
 </head>
 <body>
 
-  <h1>编钟 · 木鱼 · 鼓</h1>
-  <p class="tagline">TP制作🥁</p>
+  <h1>钟鼓楼</h1>
+  <p class="tagline">国风打击乐 · TP制作</p>
+  <nav class="mode-switch">
+    <button class="mode-btn" id="modeMuyu">敲木鱼</button>
+    <button class="mode-btn" id="modeSeq">钟鼓乐</button>
+  </nav>
 
   <div class="unit">
     <span class="screw tl"></span><span class="screw tr"></span>
     <span class="screw bl"></span><span class="screw br"></span>
 
-    <section class="panel pads-panel">
-      <p class="section-label">即兴 — 点击或按键 1–8</p>
-      <div class="pads" id="pads"></div>
+    <!-- 敲木鱼 -->
+    <section id="view-muyu">
+      <div class="panel">
+        <p class="section-label">日行一善 · 功德无量</p>
+        <div class="muyu-cols">
+          <div class="muyu-left">
+            <div class="muyu-stage" id="muyuStage">
+              <button class="muyu-fish" id="muyuFish" aria-label="敲木鱼">
+                <span class="mu-char">木鱼</span>
+                <span class="mu-hint">点击敲击</span>
+              </button>
+            </div>
+            <div class="combo-line" id="comboLine"></div>
+          </div>
+          <div class="muyu-right">
+            <div class="merit-board">
+              <div class="merit-item">
+                <div class="merit-num" id="meritTotal">0</div>
+                <div class="merit-cap">总功德</div>
+              </div>
+              <div class="merit-item">
+                <div class="merit-num" id="meritToday">0</div>
+                <div class="merit-cap">今日</div>
+              </div>
+              <div class="merit-item">
+                <div class="merit-num" id="meritCombo">0</div>
+                <div class="merit-cap">最高连击</div>
+              </div>
+            </div>
+            <div class="muyu-actions">
+              <button class="ghost-btn btn3d" id="posterBtn">功德海报</button>
+              <button class="ghost-btn btn3d" id="meritResetBtn">清零</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <div class="panel transport">
-      <button id="playBtn" aria-label="播放">▶</button>
-      <div class="tempo-wrap">
-        <label for="tempo">速度</label>
-        <input type="range" id="tempo" min="60" max="168" value="96">
-        <span id="tempoVal">96 拍/分</span>
-      </div>
-    </div>
+    <!-- 钟鼓乐（编曲器） -->
+    <section id="view-seq" hidden>
+      <section class="panel pads-panel">
+        <p class="section-label">即兴 — 点击或按键 1–8</p>
+        <div class="pads" id="pads"></div>
+      </section>
 
-    <div class="panel subrow">
-      <span>图案</span>
-      <div class="slots" id="slots"></div>
-      <span class="sub-gap"></span>
-      <button class="ghost-btn btn3d" id="randomBtn">随机</button>
-      <button class="ghost-btn btn3d" id="clearBtn">清空</button>
-      <button class="ghost-btn btn3d" id="humanizeBtn">灵感</button>
-      <div class="feel-wrap">
-        <label for="swing">律动</label>
-        <input type="range" id="swing" min="0" max="50" value="0">
-        <span id="swingVal">0%</span>
+      <div class="panel transport">
+        <button id="playBtn" aria-label="播放">▶</button>
+        <button class="ghost-btn btn3d" id="recBtn" aria-label="录音"><span class="dot"></span>录音</button>
+        <div class="tempo-wrap">
+          <label for="tempo">速度</label>
+          <input type="range" id="tempo" min="60" max="168" value="96">
+          <span id="tempoVal">96 拍/分</span>
+        </div>
       </div>
-    </div>
 
-    <details class="panel mixer">
-      <summary>混音与音色 ⚙️</summary>
-      <div class="mixer-grid" id="mixerGrid"></div>
-    </details>
-
-    <div class="panel seq-wrap" id="seqWrap">
-      <div class="seq-scroll" id="seqScroll">
-        <div class="sequencer" id="sequencer"></div>
+      <div class="panel">
+        <p class="section-label">锣鼓点 — 点一下载入当前图案</p>
+        <div class="preset-scroll" id="presetScroll"></div>
       </div>
-    </div>
+
+      <div class="panel subrow">
+        <span>图案</span>
+        <div class="slots" id="slots"></div>
+        <span class="sub-gap"></span>
+        <button class="ghost-btn btn3d" id="randomBtn">随机</button>
+        <button class="ghost-btn btn3d" id="clearBtn">清空</button>
+        <button class="ghost-btn btn3d" id="humanizeBtn">灵感</button>
+        <div class="feel-wrap">
+          <label for="swing">律动</label>
+          <input type="range" id="swing" min="0" max="50" value="0">
+          <span id="swingVal">0%</span>
+        </div>
+      </div>
+
+      <details class="panel mixer">
+        <summary>混音与音色</summary>
+        <div class="mixer-grid" id="mixerGrid"></div>
+      </details>
+
+      <div class="panel seq-wrap" id="seqWrap">
+        <div class="seq-scroll" id="seqScroll">
+          <div class="sequencer" id="sequencer"></div>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <footer>节拍每四步分组。图案 A/B/C/D，速度与混音保存在本机。</footer>
+  <footer>节拍每四步分组。图案 A/B/C/D，速度、混音与功德保存在本机。预置锣鼓点为风格化编配。</footer>
+  <div class="toast" id="toast"></div>
 
 <script>
 (function () {
@@ -372,7 +549,8 @@
   var NUM_STEPS = 16;
   var NUM_SLOTS = 4;
   var SLOT_NAMES = ["A", "B", "C", "D"];
-  var STORE_KEY = "perc-synth-v2";
+  var STORE_KEY = "zhonggulou-v1";
+  var LEGACY_KEY = "perc-synth-v2";
 
   var TRACKS = [
     { id: "bellHigh",  label: "编钟·高", shape: "bell", pitch: "high", freq: 587.33, key: "1" },
@@ -388,52 +566,98 @@
   var TRACK_BY_ID = {};
   TRACKS.forEach(function (t) { TRACK_BY_ID[t.id] = t; });
 
+  /* 预置锣鼓点：风格化编配（非权威锣鼓经记谱），点一下载入当前图案槽 */
+  var PRESETS = [
+    { name: "迎宾锣鼓", tempo: 120, desc: "堂鼓开道",
+      steps: { kick: [0,4,8,12], snare: [4,12], hatClosed: [0,2,4,6,8,10,12,14],
+               hatOpen: [14], wood: [2,6,10,14], bellLow: [0], bellMid: [8] } },
+    { name: "急急风", tempo: 150, desc: "密锣紧打",
+      steps: { kick: [0,4,8,12], snare: [2,6,10,14], hatClosed: [0,2,4,6,8,10,12,14],
+               wood: [1,3,5,7,9,11,13,15], bellHigh: [0,8], bellLow: [12] } },
+    { name: "慢长锤", tempo: 72, desc: "一锤定音",
+      steps: { kick: [0,8], bellLow: [0,8], bellMid: [4,12],
+               wood: [0,4,8,12], hatOpen: [15] } },
+    { name: "夜深沉", tempo: 66, desc: "钟磬悠远",
+      steps: { bellHigh: [0,6,10], bellMid: [2,8,14], bellLow: [4,12],
+               wood: [8], hatClosed: [4,12] } },
+    { name: "龙腾虎跃", tempo: 132, desc: "欢腾热烈",
+      steps: { kick: [0,4,8,12,14], snare: [4,12], hatClosed: [0,2,4,6,8,10,12,14],
+               hatOpen: [6], wood: [2,6,10,14], bellMid: [0,8], bellHigh: [10] } }
+  ];
+
   function emptySteps() {
     var o = {};
     TRACKS.forEach(function (t) { o[t.id] = new Array(NUM_STEPS).fill(false); });
     return o;
   }
 
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+
   var state = {
+    view: "muyu",
     activeSlot: 0,
     slots: [],
     trackVol: {},
     masterVol: 0.9,
     bellDecay: 1.0,
     swing: 0,
-    humanize: false
+    humanize: false,
+    merit: { total: 0, day: "", dayCount: 0, maxCombo: 0 }
   };
   for (var s = 0; s < NUM_SLOTS; s++) state.slots.push({ tempo: 96, steps: emptySteps() });
   TRACKS.forEach(function (t) { state.trackVol[t.id] = 1.0; });
 
+  function applyLoadedSlots(p) {
+    if (Array.isArray(p.slots) && p.slots.length === NUM_SLOTS) {
+      state.slots = p.slots.map(function (slot) {
+        var steps = emptySteps();
+        if (slot && slot.steps) {
+          TRACKS.forEach(function (t) {
+            if (Array.isArray(slot.steps[t.id]) && slot.steps[t.id].length === NUM_STEPS)
+              steps[t.id] = slot.steps[t.id];
+          });
+        }
+        return { tempo: (slot && slot.tempo) || 96, steps: steps };
+      });
+    }
+    if (typeof p.masterVol === "number") state.masterVol = Math.max(0.15, p.masterVol);
+    if (typeof p.bellDecay === "number") state.bellDecay = p.bellDecay;
+    if (typeof p.swing === "number") state.swing = p.swing;
+    if (typeof p.humanize === "boolean") state.humanize = p.humanize;
+    if (typeof p.activeSlot === "number") state.activeSlot = p.activeSlot;
+    if (p.trackVol) {
+      TRACKS.forEach(function (t) {
+        if (typeof p.trackVol[t.id] === "number")
+          state.trackVol[t.id] = Math.max(0.1, p.trackVol[t.id]);
+      });
+    }
+  }
+
   function loadState() {
     try {
       var raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return;
-      var p = JSON.parse(raw);
-      if (!p) return;
-      if (Array.isArray(p.slots) && p.slots.length === NUM_SLOTS) {
-        state.slots = p.slots.map(function (slot) {
-          var steps = emptySteps();
-          if (slot && slot.steps) {
-            TRACKS.forEach(function (t) {
-              if (Array.isArray(slot.steps[t.id]) && slot.steps[t.id].length === NUM_STEPS)
-                steps[t.id] = slot.steps[t.id];
-            });
+      if (raw) {
+        var p = JSON.parse(raw);
+        if (p) {
+          applyLoadedSlots(p);
+          if (p.merit && typeof p.merit.total === "number") {
+            state.merit.total = p.merit.total;
+            state.merit.day = p.merit.day || "";
+            state.merit.dayCount = p.merit.dayCount || 0;
+            state.merit.maxCombo = p.merit.maxCombo || 0;
           }
-          return { tempo: (slot && slot.tempo) || 96, steps: steps };
-        });
+          if (p.view === "muyu" || p.view === "seq") state.view = p.view;
+          return;
+        }
       }
-      if (typeof p.masterVol === "number") state.masterVol = Math.max(0.15, p.masterVol);
-      if (typeof p.bellDecay === "number") state.bellDecay = p.bellDecay;
-      if (typeof p.swing === "number") state.swing = p.swing;
-      if (typeof p.humanize === "boolean") state.humanize = p.humanize;
-      if (typeof p.activeSlot === "number") state.activeSlot = p.activeSlot;
-      if (p.trackVol) {
-        TRACKS.forEach(function (t) {
-          if (typeof p.trackVol[t.id] === "number")
-            state.trackVol[t.id] = Math.max(0.1, p.trackVol[t.id]);
-        });
+      /* 老版本迁移：perc-synth-v2 → zhonggulou-v1 */
+      var legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        var lp = JSON.parse(legacy);
+        if (lp) applyLoadedSlots(lp);
       }
     } catch (e) {}
   }
@@ -464,10 +688,20 @@
 
   function activeSlot() { return state.slots[state.activeSlot]; }
 
+  var toastEl = document.getElementById("toast");
+  var toastTimer = 0;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1800);
+  }
+
   function wirePulse(el) {
     el.addEventListener("animationend", function () { el.classList.remove("pulse"); });
   }
   function triggerPulse(el) {
+    if (!el) return;
     el.classList.remove("pulse");
     void el.offsetWidth;
     el.classList.add("pulse");
@@ -475,6 +709,7 @@
 
   /* Audio */
   var audioCtx = null, noiseBuf = null, masterGain = null, trackGains = {};
+  var recDest = null;
 
   function makeNoiseBuffer() {
     var len = audioCtx.sampleRate;
@@ -501,6 +736,11 @@
     limiter.release.value = 0.12;
     masterGain.connect(limiter);
     limiter.connect(audioCtx.destination);
+    /* 录音分流：从限幅后取信号，不影响监听 */
+    try {
+      recDest = audioCtx.createMediaStreamDestination();
+      limiter.connect(recDest);
+    } catch (e) { recDest = null; }
     TRACKS.forEach(function (t) {
       var g = audioCtx.createGain();
       var vol = state.trackVol[t.id];
@@ -545,7 +785,7 @@
     osc.frequency.exponentialRampToValueAtTime(38, t + 0.14);
     g.gain.setValueAtTime(1.0, t);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.36);
-    osc.connect(g).connect(out);
+    osc.connect(g); g.connect(out);
     osc.start(t); osc.stop(t + 0.38);
 
     var click = audioCtx.createBufferSource();
@@ -555,7 +795,7 @@
     var cg = audioCtx.createGain();
     cg.gain.setValueAtTime(0.5, t);
     cg.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
-    click.connect(cf).connect(cg).connect(out);
+    click.connect(cf); cf.connect(cg); cg.connect(out);
     click.start(t); click.stop(t + 0.03);
   }
 
@@ -569,7 +809,7 @@
     var ng = audioCtx.createGain();
     ng.gain.setValueAtTime(0.5, t);
     ng.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
-    noise.connect(bp).connect(ng).connect(out);
+    noise.connect(bp); bp.connect(ng); ng.connect(out);
     noise.start(t); noise.stop(t + 0.18);
 
     var sizzle = audioCtx.createBufferSource();
@@ -579,7 +819,7 @@
     var hg = audioCtx.createGain();
     hg.gain.setValueAtTime(0.22, t);
     hg.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
-    sizzle.connect(hp).connect(hg).connect(out);
+    sizzle.connect(hp); hp.connect(hg); hg.connect(out);
     sizzle.start(t); sizzle.stop(t + 0.1);
 
     [188, 224].forEach(function (f, i) {
@@ -588,7 +828,7 @@
       var og = audioCtx.createGain();
       og.gain.setValueAtTime(i === 0 ? 0.3 : 0.22, t);
       og.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-      osc.connect(og).connect(out);
+      osc.connect(og); og.connect(out);
       osc.start(t); osc.stop(t + 0.11);
     });
   }
@@ -599,7 +839,7 @@
     bus.gain.value = level;
     var hp = audioCtx.createBiquadFilter();
     hp.type = "highpass"; hp.frequency.value = 6500;
-    bus.connect(hp).connect(out);
+    bus.connect(hp); hp.connect(out);
 
     var master = audioCtx.createGain();
     master.gain.setValueAtTime(1, t);
@@ -621,14 +861,13 @@
     var ng = audioCtx.createGain();
     ng.gain.setValueAtTime(level * 0.35, t);
     ng.gain.exponentialRampToValueAtTime(0.001, t + decay * 0.6);
-    noise.connect(nf).connect(ng).connect(out);
+    noise.connect(nf); nf.connect(ng); ng.connect(out);
     noise.start(t); noise.stop(t + decay + 0.02);
   }
 
   function playWood(t, dest, vel) {
     var out = voiceBus(dest, vel);
 
-    // 木箱空腔共鸣：两个非谐波泛音（约2.65倍频比），起音略带下滑营造"梆"的敲击感
     [
       { freq: 520,  decay: 0.1,  gain: 0.62 },
       { freq: 1380, decay: 0.06, gain: 0.3 }
@@ -640,11 +879,10 @@
       var g = audioCtx.createGain();
       g.gain.setValueAtTime(p.gain, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + p.decay);
-      osc.connect(g).connect(out);
+      osc.connect(g); g.connect(out);
       osc.start(t); osc.stop(t + p.decay + 0.02);
     });
 
-    // 敲击瞬态：短促带通噪声，模拟木槌触发的一下"哒"声
     var click = audioCtx.createBufferSource();
     click.buffer = noiseBuf;
     var cf = audioCtx.createBiquadFilter();
@@ -652,7 +890,7 @@
     var cg = audioCtx.createGain();
     cg.gain.setValueAtTime(0.32, t);
     cg.gain.exponentialRampToValueAtTime(0.001, t + 0.014);
-    click.connect(cf).connect(cg).connect(out);
+    click.connect(cf); cf.connect(cg); cg.connect(out);
     click.start(t); click.stop(t + 0.02);
   }
 
@@ -663,7 +901,7 @@
     var lp = audioCtx.createBiquadFilter();
     lp.type = "lowpass";
     lp.frequency.value = Math.min(11000, freq * 9);
-    bus.connect(lp).connect(out);
+    bus.connect(lp); lp.connect(out);
 
     [
       { r: 1.00, d: 2.0,  g: 0.50 },
@@ -682,7 +920,7 @@
         var g = audioCtx.createGain();
         g.gain.setValueAtTime(p.g * 0.5, t);
         g.gain.exponentialRampToValueAtTime(0.0006, t + d);
-        osc.connect(g).connect(bus);
+        osc.connect(g); g.connect(bus);
         osc.start(t); osc.stop(t + d + 0.05);
       });
     });
@@ -694,7 +932,7 @@
     var sg = audioCtx.createGain();
     sg.gain.setValueAtTime(0.3, t);
     sg.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
-    strike.connect(sf).connect(sg).connect(out);
+    strike.connect(sf); sf.connect(sg); sg.connect(out);
     strike.start(t); strike.stop(t + 0.03);
 
     var sparkle = audioCtx.createBufferSource();
@@ -704,7 +942,7 @@
     var kg = audioCtx.createGain();
     kg.gain.setValueAtTime(0.16, t);
     kg.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
-    sparkle.connect(kf).connect(kg).connect(out);
+    sparkle.connect(kf); kf.connect(kg); kg.connect(out);
     sparkle.start(t); sparkle.stop(t + 0.05);
   }
 
@@ -724,13 +962,208 @@
     else if (PLAYERS[id]) PLAYERS[id](t, dest, vel);
   }
 
-  /* Pads */
+  /* 模式切换 */
+  var viewMuyu = document.getElementById("view-muyu");
+  var viewSeq = document.getElementById("view-seq");
+  var modeMuyuBtn = document.getElementById("modeMuyu");
+  var modeSeqBtn = document.getElementById("modeSeq");
+
+  function setView(v) {
+    state.view = v;
+    var isMuyu = v === "muyu";
+    viewMuyu.hidden = !isMuyu;
+    viewSeq.hidden = isMuyu;
+    modeMuyuBtn.classList.toggle("on", isMuyu);
+    modeSeqBtn.classList.toggle("on", !isMuyu);
+    persist();
+    if (!isMuyu) requestAnimationFrame(updateScrollFade);
+  }
+  modeMuyuBtn.addEventListener("click", function () { setView("muyu"); });
+  modeSeqBtn.addEventListener("click", function () { setView("seq"); });
+
+  /* ---------- 敲木鱼 ---------- */
+  var muyuFish = document.getElementById("muyuFish");
+  var muyuStage = document.getElementById("muyuStage");
+  var meritTotalEl = document.getElementById("meritTotal");
+  var meritTodayEl = document.getElementById("meritToday");
+  var meritComboEl = document.getElementById("meritCombo");
+  var comboLine = document.getElementById("comboLine");
+  wirePulse(muyuFish);
+
+  function renderMerit() {
+    var m = state.merit;
+    var t = todayStr();
+    if (m.day !== t) { m.day = t; m.dayCount = 0; }
+    meritTotalEl.textContent = m.total;
+    meritTodayEl.textContent = m.dayCount;
+    meritComboEl.textContent = m.maxCombo || 0;
+  }
+
+  function floatPlusOne() {
+    var s = document.createElement("span");
+    s.className = "float-plus";
+    s.textContent = "功德 +1";
+    /* 随机左右偏移，避免连击时重叠 */
+    s.style.marginLeft = (Math.random() * 70 - 35) + "px";
+    muyuStage.appendChild(s);
+    s.addEventListener("animationend", function () { s.remove(); });
+  }
+
+  function knockMuyu() {
+    ensureAudio();
+    if (!audioCtx) return;
+    playSound("wood", audioCtx.currentTime, 1.0);
+    var m = state.merit;
+    var t = todayStr();
+    if (m.day !== t) { m.day = t; m.dayCount = 0; }
+    m.dayCount++;
+    m.total++;
+    var now = Date.now();
+    if (now - (m._last || 0) < 1200) m._combo = (m._combo || 0) + 1;
+    else m._combo = 1;
+    m._last = now;
+    if (m._combo > (m.maxCombo || 0)) m.maxCombo = m._combo;
+    persist();
+    renderMerit();
+    floatPlusOne();
+    triggerPulse(muyuFish);
+    comboLine.textContent = m._combo >= 5 ? "连击 ×" + m._combo + " · 心诚则灵" : "";
+  }
+
+  muyuFish.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    knockMuyu();
+  });
+  muyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockMuyu(); });
+
+  document.getElementById("meritResetBtn").addEventListener("click", function () {
+    state.merit = { total: 0, day: todayStr(), dayCount: 0, maxCombo: 0 };
+    persist();
+    renderMerit();
+    comboLine.textContent = "";
+    toast("功德已清零，重新积攒");
+  });
+
+  /* 功德海报：canvas 生成，可分享可下载 */
+  document.getElementById("posterBtn").addEventListener("click", function () {
+    var m = state.merit;
+    var W = 900, H = 1200;
+    var c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var g = c.getContext("2d");
+    var bg = g.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, "#2a251c"); bg.addColorStop(1, "#14110b");
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = "#c9a84a"; g.lineWidth = 6; g.strokeRect(36, 36, W - 72, H - 72);
+    g.strokeStyle = "rgba(201,168,74,0.4)"; g.lineWidth = 2; g.strokeRect(56, 56, W - 112, H - 112);
+    g.textAlign = "center";
+    g.fillStyle = "#c9a84a";
+    g.font = "700 84px Songti SC, STSong, serif";
+    g.fillText("钟鼓楼", W / 2, 220);
+    g.fillStyle = "#9a8e68";
+    g.font = "40px Songti SC, STSong, serif";
+    g.fillText("日行一善 · 功德无量", W / 2, 300);
+    /* 木鱼简形 */
+    g.fillStyle = "#8a5a32";
+    g.beginPath(); g.arc(W / 2, 560, 130, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "rgba(30,18,8,0.55)";
+    g.fillRect(W / 2 - 90, 556, 180, 9);
+    g.fillStyle = "#d8c9a0";
+    g.font = "700 150px Songti SC, STSong, serif";
+    g.fillText(String(m.total), W / 2, 830);
+    g.fillStyle = "#9a8e68";
+    g.font = "44px Songti SC, STSong, serif";
+    g.fillText("总功德", W / 2, 900);
+    g.font = "36px sans-serif";
+    g.fillText("今日 +" + (m.day === todayStr() ? m.dayCount : 0) + "  ·  " + todayStr(), W / 2, 1000);
+    g.fillStyle = "rgba(154,142,104,0.7)";
+    g.font = "30px sans-serif";
+    g.fillText("国风打击乐 · TP制作", W / 2, 1090);
+    c.toBlob(function (blob) {
+      if (!blob) { toast("海报生成失败"); return; }
+      var file = new File([blob], "zhonggulou-merit.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: "钟鼓楼·功德海报" }).catch(function () {});
+      } else {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "zhonggulou-merit.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        toast("海报已下载");
+      }
+    }, "image/png");
+  });
+
+  /* ---------- 录音 ---------- */
+  var recBtn = document.getElementById("recBtn");
+  var mediaRec = null, recChunks = [], isRec = false;
+
+  function pickMime() {
+    if (!window.MediaRecorder) return null;
+    var list = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+    for (var i = 0; i < list.length; i++) {
+      try { if (MediaRecorder.isTypeSupported(list[i])) return list[i]; } catch (e) {}
+    }
+    return null;
+  }
+
+  function setRecUI(on) {
+    isRec = on;
+    recBtn.classList.toggle("on", on);
+    recBtn.innerHTML = on ? '<span class="dot"></span>停止' : '<span class="dot"></span>录音';
+  }
+
+  function finishRec() {
+    setRecUI(false);
+    if (!recChunks.length) { toast("没有录到声音"); return; }
+    var blob = new Blob(recChunks, { type: mediaRec.mimeType || "audio/webm" });
+    var ext = (mediaRec.mimeType || "").indexOf("mp4") >= 0 ? "m4a" : "webm";
+    var file = new File([blob], "zhonggulou-" + Date.now() + "." + ext, { type: blob.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "钟鼓楼·录音" }).catch(function () {});
+    } else {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+      toast("录音已下载");
+    }
+    recChunks = [];
+  }
+
+  recBtn.addEventListener("click", function () {
+    if (isRec) {
+      try { mediaRec.stop(); } catch (e) { setRecUI(false); }
+      return;
+    }
+    ensureAudio();
+    if (!audioCtx || !recDest) { toast("音频尚未就绪"); return; }
+    var mime = pickMime();
+    if (!mime) { toast("当前浏览器不支持录音"); return; }
+    recChunks = [];
+    try {
+      mediaRec = new MediaRecorder(recDest.stream, { mimeType: mime });
+    } catch (e) { toast("录音启动失败"); return; }
+    mediaRec.ondataavailable = function (e) { if (e.data && e.data.size) recChunks.push(e.data); };
+    mediaRec.onstop = finishRec;
+    mediaRec.start();
+    setRecUI(true);
+    toast("录音中，再点一次停止");
+  });
+
+  /* ---------- 鼓垫（CSS 绘制） ---------- */
   var padsEl = document.getElementById("pads");
   var padElsById = {};
   var keyToPad = {};
   var lastHitAt = {};
   var rollTimers = {};
-  var ROLL_INTERVAL = 170; // 长按滚奏的间隔(ms)，约每秒6下
+  var ROLL_INTERVAL = 170;
 
   function hitPad(id) {
     var now = Date.now();
@@ -759,16 +1192,22 @@
   TRACKS.forEach(function (p) {
     var btn = document.createElement("button");
     btn.className = "pad " + p.shape;
-    btn.innerHTML =
-      '<img src="images/icon-' + p.id + '.webp" alt="' + p.label + '" width="128" height="128" loading="lazy">' +
-      '<span class="name">' + p.label + "</span>";
+    btn.setAttribute("aria-label", p.label);
+    var num = document.createElement("span");
+    num.className = "num";
+    num.textContent = p.key;
+    var nm = document.createElement("span");
+    nm.className = "name";
+    nm.textContent = p.label;
+    btn.appendChild(num);
+    btn.appendChild(nm);
     wirePulse(btn);
     btn.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
       activePointerPad[e.pointerId] = p.id;
       startRoll(p.id);
     });
     btn.addEventListener("pointerleave", function () { stopRoll(p.id); });
-    /* 鼠标/触摸已由 pointerdown 触发；click 只处理键盘激活(detail===0)，避免点一下敲两声 */
     btn.addEventListener("click", function (e) { if (e.detail === 0) hitPad(p.id); });
     padsEl.appendChild(btn);
     padElsById[p.id] = btn;
@@ -788,7 +1227,8 @@
     if (e.repeat) return;
     var id = keyToPad[e.key];
     if (!id) return;
-    startRoll(id);
+    if (state.view === "seq") startRoll(id);
+    else if (id === "wood") knockMuyu();
   });
   window.addEventListener("keyup", function (e) {
     var id = keyToPad[e.key];
@@ -888,6 +1328,35 @@
     persist();
   });
 
+  /* 预置锣鼓点 */
+  var presetScroll = document.getElementById("presetScroll");
+  PRESETS.forEach(function (p) {
+    var chip = document.createElement("button");
+    chip.className = "preset-chip";
+    chip.innerHTML = "";
+    var nm = document.createElement("div");
+    nm.textContent = p.name;
+    var ds = document.createElement("small");
+    ds.textContent = p.desc + " · " + p.tempo + "拍/分";
+    chip.appendChild(nm);
+    chip.appendChild(ds);
+    chip.addEventListener("click", function () {
+      var slot = activeSlot();
+      TRACKS.forEach(function (t) { slot.steps[t.id] = new Array(NUM_STEPS).fill(false); });
+      Object.keys(p.steps).forEach(function (id) {
+        if (!TRACK_BY_ID[id]) return;
+        p.steps[id].forEach(function (i) {
+          if (i >= 0 && i < NUM_STEPS) slot.steps[id][i] = true;
+        });
+      });
+      slot.tempo = p.tempo;
+      renderActiveSlot();
+      persist();
+      toast("已载入「" + p.name + "」到图案 " + SLOT_NAMES[state.activeSlot]);
+    });
+    presetScroll.appendChild(chip);
+  });
+
   /* Sequencer */
   var seqEl = document.getElementById("sequencer");
   var seqScroll = document.getElementById("seqScroll");
@@ -935,6 +1404,7 @@
   }
 
   function updateScrollFade() {
+    if (!seqScroll) return;
     var atEnd = seqScroll.scrollLeft + seqScroll.clientWidth >= seqScroll.scrollWidth - 2;
     seqWrap.classList.toggle("at-end", atEnd);
   }
@@ -996,7 +1466,6 @@
   }
 
   function scheduler() {
-    /* 定时器被系统拖慢后已落后于当前时间：直接对齐，不补播，避免"爆发" */
     if (nextStepTime < audioCtx.currentTime - 0.05) {
       nextStepTime = audioCtx.currentTime + 0.05;
       noteQueue = [];
@@ -1050,7 +1519,6 @@
     playBtn.setAttribute("aria-label", "播放");
   }
 
-  /* 页面切到后台时暂停序列器：后台定时器会被限速，继续播放只会断断续续 */
   document.addEventListener("visibilitychange", function () {
     if (document.hidden && isPlaying) stopSeq();
   });
@@ -1069,7 +1537,6 @@
     if (e.pointerType === "mouse" && e.button !== 0) return;
     togglePlay();
   });
-  /* click 只处理键盘激活(detail===0)，避免 pointerdown + click 连切两次 */
   playBtn.addEventListener("click", function (e) { if (e.detail === 0) togglePlay(); });
 
   document.getElementById("clearBtn").addEventListener("click", function () {
@@ -1097,6 +1564,10 @@
     });
     persist();
   });
+
+  /* 初始化 */
+  setView(state.view === "seq" ? "seq" : "muyu");
+  renderMerit();
 })();
 </script>
 </body>
