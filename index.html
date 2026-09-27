@@ -286,7 +286,7 @@
     100% { opacity: 0; transform: translate(-50%, -46px) scale(1.1); }
   }
   .combo-line { min-height: 16px; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; margin: 2px 0 6px; }
-  /* 木鱼·磬：竖屏上下，横屏并列 */
+  /* 磬：独占一页 */
   #view-duo { text-align: center; }
   .duo-cols { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .duo-item { display: flex; flex-direction: column; align-items: center; }
@@ -296,13 +296,11 @@
     color: var(--bronze-high); margin: 6px 0 2px;
   }
   .duo-hint { font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-indent: 0.2em; margin: 0 0 4px; }
-  #qingStone { width: 178px; height: 178px; }
+  #qingStone { width: 208px; height: 208px; }
   #qingStone.noimg {
     background: radial-gradient(circle at 34% 28%, #a87f45, #5c3f1c 55%, #241a0c 100%);
   }
-  #duoMuyuFish { width: 138px; height: 138px; }
-  .duo-stage .mallet-wrap { transform: scale(0.62); right: -34px; top: -40px; }
-  .duo-stage .qing-mallet-wrap { transform: scale(0.5); right: -28px; top: -34px; }
+  .duo-stage .qing-mallet-wrap { transform: scale(0.58); right: -30px; top: -36px; }
   /* 磬槌：轻提缓落，特别温柔 */
   .qing-mallet.tap { animation: qingTap 0.9s ease-in-out; }
   @keyframes qingTap {
@@ -311,6 +309,16 @@
     48%  { transform: translate(-24px, -3px) rotate(8deg); }
     70%  { transform: translate(3px, -5px) rotate(29deg); }
     100% { transform: translate(0, 0) rotate(24deg); }
+  }
+  /* 磬槌改金属制：钢柄 + 金属槌头 */
+  .qing-mallet .mallet-handle {
+    background: linear-gradient(180deg, #f2f5f8, #aeb8c4 45%, #646e7a);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,.75), 0 2px 4px rgba(0,0,0,.5);
+  }
+  .qing-mallet .mallet-head {
+    background: radial-gradient(circle at 35% 30%, #ffffff, #ccd4de 42%, #828d9b 72%, #4d555f);
+    border: 1px solid rgba(45,52,62,.6);
+    box-shadow: 0 3px 6px rgba(0,0,0,.5), inset 0 -3px 6px rgba(70,80,95,.55), inset 0 2px 3px rgba(255,255,255,.65);
   }
   .qing-bowl.sway { animation: qingSway 1.2s ease; }
   @keyframes qingSway {
@@ -561,8 +569,7 @@
     /* 木鱼横屏：左右并列 */
     #view-muyu .muyu-cols { display: flex; align-items: center; gap: 12px; }
     #view-duo .duo-cols { flex-direction: row; justify-content: center; gap: 34px; }
-    #qingStone { width: 150px; height: 150px; }
-    #duoMuyuFish { width: 120px; height: 120px; }
+    #qingStone { width: 176px; height: 176px; }
     #view-muyu .muyu-left { flex: 1; }
     #view-muyu .muyu-right { flex: 1; }
     .muyu-fish { width: 170px; height: 170px; }
@@ -616,7 +623,7 @@
   <nav class="mode-switch">
     <button class="mode-btn" id="modeMuyu">敲木鱼</button>
     <button class="mode-btn" id="modeSeq">钟鼓乐</button>
-    <button class="mode-btn" id="modeDuo">木鱼·磬</button>
+    <button class="mode-btn" id="modeDuo">磬</button>
   </nav>
 
   <div class="unit">
@@ -700,7 +707,7 @@
       </div>
     </section>
 
-    <!-- 木鱼·磬 -->
+    <!-- 磬 -->
     <section id="view-duo" hidden>
       <div class="panel">
         <p class="section-label">金声玉振 · 功德无量</p>
@@ -720,20 +727,6 @@
             <p class="duo-name">磬</p>
             <p class="duo-hint">轻叩 · 余音悠远</p>
           </div>
-          <div class="duo-item">
-            <div class="muyu-stage duo-stage" id="duoMuyuStage">
-              <button class="muyu-fish" id="duoMuyuFish" aria-label="敲木鱼">
-                <img src="images/muyu.webp" alt="木鱼" draggable="false">
-              </button>
-              <div class="mallet-wrap" aria-hidden="true">
-                <div class="mallet" id="duoMuyuMallet">
-                  <div class="mallet-handle"></div>
-                  <div class="mallet-head"></div>
-                </div>
-              </div>
-            </div>
-            <p class="duo-name">木鱼</p>
-          </div>
         </div>
       </div>
     </section>
@@ -741,7 +734,7 @@
     <!-- 钟鼓乐（编曲器） -->
     <section id="view-seq" hidden>
       <section class="panel pads-panel">
-        <p class="section-label">即兴 — 点击或按键 1–8</p>
+        <p class="section-label">即兴 — 点击或按键 1–12</p>
         <div class="pads" id="pads"></div>
       </section>
 
@@ -761,7 +754,6 @@
       </div>
 
       <div class="panel subrow">
-        <span>图案</span>
         <div class="slots" id="slots"></div>
         <span class="sub-gap"></span>
         <button class="ghost-btn btn3d" id="randomBtn">随机</button>
@@ -787,7 +779,7 @@
     </section>
   </div>
 
-  <footer>晨钟暮鼓 · 功德无量<span class="foot-sub">节拍每四步分组 · 图案 A/B/C/D · 速度、混音与功德保存在本机 · 预置锣鼓点为风格化编配 · TP 制作</span></footer>
+  <footer>晨钟暮鼓 · 功德无量<span class="foot-sub">节拍每四步分组 · A/B/C/D · 速度、混音与功德保存在本机 · 预置锣鼓点为风格化编配 · TP 制作</span></footer>
   <div class="toast" id="toast"></div>
 
 <script>
@@ -1541,30 +1533,24 @@
   });
   muyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockMuyu(); });
 
-  /* ---------- 木鱼·磬页 ---------- */
+  /* ---------- 磬页 ---------- */
   var qingStage = document.getElementById("qingStage");
   var qingStone = document.getElementById("qingStone");
   var qingMallet = document.getElementById("qingMallet");
-  var duoMuyuStage = document.getElementById("duoMuyuStage");
-  var duoMuyuFish = document.getElementById("duoMuyuFish");
-  var duoMuyuMallet = document.getElementById("duoMuyuMallet");
   wirePulse(qingStone);
-  wirePulse(duoMuyuFish);
 
-  [ [qingStone, "qing"], [duoMuyuFish, "muyu"] ].forEach(function (pair) {
-    var img = pair[0].querySelector("img");
+  (function () {
+    var img = qingStone.querySelector("img");
     if (img) {
       img.addEventListener("error", function () {
-        pair[0].classList.add("noimg");
+        qingStone.classList.add("noimg");
         img.remove();
       });
     }
-  });
+  })();
 
   qingMallet.addEventListener("animationend", function () { qingMallet.classList.remove("tap"); });
   qingStone.addEventListener("animationend", function () { qingStone.classList.remove("sway"); });
-  duoMuyuMallet.addEventListener("animationend", function () { duoMuyuMallet.classList.remove("hit"); });
-  duoMuyuFish.addEventListener("animationend", function () { duoMuyuFish.classList.remove("thump"); });
 
   /* 磬槌落点在动画 48%（0.9s × 48% ≈ 0.43s），轻声 + 微晃 + 柔波纹同步 */
   var QING_IMPACT_DELAY = 420;
@@ -1587,36 +1573,11 @@
     }, QING_IMPACT_DELAY);
   }
 
-  /* 本页木鱼：沿用大力敲法，尺寸缩小而已 */
-  function knockDuoMuyu() {
-    ensureAudio();
-    if (!audioCtx) return;
-    var knockCtx = audioCtx;
-    gainMerit();
-    floatPlusOne(duoMuyuStage);
-    triggerPulse(duoMuyuFish);
-    duoMuyuMallet.classList.remove("hit");
-    void duoMuyuMallet.offsetWidth;
-    duoMuyuMallet.classList.add("hit");
-    setTimeout(function () {
-      try { playSound("wood", knockCtx.currentTime, 0.9); } catch (e) {}
-      duoMuyuFish.classList.remove("thump");
-      void duoMuyuFish.offsetWidth;
-      duoMuyuFish.classList.add("thump");
-      shockWave(duoMuyuStage);
-    }, MUYU_IMPACT_DELAY);
-  }
-
   qingStone.addEventListener("pointerdown", function (e) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     knockQing();
   });
   qingStone.addEventListener("click", function (e) { if (e.detail === 0) knockQing(); });
-  duoMuyuFish.addEventListener("pointerdown", function (e) {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    knockDuoMuyu();
-  });
-  duoMuyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockDuoMuyu(); });
 
   document.getElementById("meritResetBtn").addEventListener("click", function () {
     state.merit = { total: 0, day: todayStr(), dayCount: 0, maxCombo: 0 };
@@ -1817,7 +1778,7 @@
     var id = keyToPad[e.key];
     if (!id) return;
     if (state.view === "seq") startRoll(id);
-    else if (id === "wood") { if (state.view === "duo") knockDuoMuyu(); else knockMuyu(); }
+    else if (id === "wood") { if (state.view === "duo") knockQing(); else knockMuyu(); }
   });
   window.addEventListener("keyup", function (e) {
     var id = keyToPad[e.key];
@@ -1941,7 +1902,7 @@
       slot.tempo = p.tempo;
       renderActiveSlot();
       persist();
-      toast("已载入「" + p.name + "」到图案 " + SLOT_NAMES[state.activeSlot]);
+      toast("已载入「" + p.name + "」到 " + SLOT_NAMES[state.activeSlot]);
     });
     presetScroll.appendChild(chip);
   });
