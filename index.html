@@ -231,18 +231,21 @@
     60% { transform: scale(1.015); }
     100% { transform: scale(1); }
   }
-  /* 木槌：柄在右上，槌头悬于鱼身左上，敲击时落下 */
+  /* 木槌：柄在右上，槌头悬于鱼身上方；敲击 = 小幅蓄力上扬 → 逆时针 88° 大力砸下（根部随之前冲）→ 弹簧回弹 */
   .mallet-wrap {
     position: absolute; right: -46px; top: -52px;
     width: 170px; height: 170px; z-index: 6; pointer-events: none;
   }
-  .mallet { position: relative; width: 170px; height: 170px; transform-origin: 164px 28px; transform: rotate(24deg); }
-  .mallet.hit { animation: malletHit 0.32s ease; }
+  .mallet { position: relative; width: 170px; height: 170px; transform-origin: 164px 28px; transform: translate(0, 0) rotate(24deg); }
+  .mallet.hit { animation: malletHit 0.62s linear; }
   @keyframes malletHit {
-    0% { transform: rotate(24deg); }
-    35% { transform: rotate(-8deg); }
-    70% { transform: rotate(14deg); }
-    100% { transform: rotate(24deg); }
+    0%   { transform: translate(0, 0) rotate(24deg); animation-timing-function: ease-out; }
+    26%  { transform: translate(8px, -10px) rotate(42deg); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.35); }
+    40%  { transform: translate(-120px, -30px) rotate(-46deg); animation-timing-function: cubic-bezier(0.3, 1.35, 0.5, 1); }
+    56%  { transform: translate(6px, -14px) rotate(34deg); animation-timing-function: ease-in-out; }
+    70%  { transform: translate(-4px, 4px) rotate(16deg); animation-timing-function: ease-out; }
+    84%  { transform: translate(2px, -3px) rotate(28deg); animation-timing-function: ease-in-out; }
+    100% { transform: translate(0, 0) rotate(24deg); }
   }
   .mallet-handle {
     position: absolute; left: 40px; top: 22px; width: 124px; height: 12px;
@@ -1247,10 +1250,12 @@
     });
   }
 
+  /* 木槌视觉落点在动画 40%（0.62s × 40% ≈ 0.25s），声音/鱼身震动/冲击波延迟同步，听感与视觉合一 */
+  var MUYU_IMPACT_DELAY = 230;
   function knockMuyu() {
     ensureAudio();
     if (!audioCtx) return;
-    playSound("wood", audioCtx.currentTime, 1.0);
+    var knockCtx = audioCtx;
     var m = state.merit;
     var t = todayStr();
     if (m.day !== t) { m.day = t; m.dayCount = 0; }
@@ -1265,14 +1270,18 @@
     renderMerit();
     floatPlusOne();
     triggerPulse(muyuFish);
-    /* 木槌落下 + 鱼身微震 + 冲击波纹 */
+    /* 木槌动画立即起跑（先蓄力上扬再砸下） */
     muyuMallet.classList.remove("hit");
     void muyuMallet.offsetWidth;
     muyuMallet.classList.add("hit");
-    muyuFish.classList.remove("thump");
-    void muyuFish.offsetWidth;
-    muyuFish.classList.add("thump");
-    shockWave();
+    /* 落点时刻再出声 + 鱼身微震 + 冲击波纹 */
+    setTimeout(function () {
+      try { playSound("wood", knockCtx.currentTime, 1.0); } catch (e) {}
+      muyuFish.classList.remove("thump");
+      void muyuFish.offsetWidth;
+      muyuFish.classList.add("thump");
+      shockWave();
+    }, MUYU_IMPACT_DELAY);
     comboLine.textContent = m._combo >= 5 ? "连击 ×" + m._combo + " · 心诚则灵" : "";
   }
 
