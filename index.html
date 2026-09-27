@@ -298,7 +298,7 @@
   .duo-hint { font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-indent: 0.2em; margin: 0 0 4px; }
   #qingStone { width: 178px; height: 178px; }
   #qingStone.noimg {
-    background: radial-gradient(circle at 34% 28%, #5d6f63, #2c3a33 55%, #141b17 100%);
+    background: radial-gradient(circle at 34% 28%, #a87f45, #5c3f1c 55%, #241a0c 100%);
   }
   #duoMuyuFish { width: 138px; height: 138px; }
   .duo-stage .mallet-wrap { transform: scale(0.62); right: -34px; top: -40px; }
@@ -312,7 +312,7 @@
     70%  { transform: translate(3px, -5px) rotate(29deg); }
     100% { transform: translate(0, 0) rotate(24deg); }
   }
-  .qing-stone.sway { animation: qingSway 1.2s ease; }
+  .qing-bowl.sway { animation: qingSway 1.2s ease; }
   @keyframes qingSway {
     0% { transform: scale(1) rotate(0deg); }
     25% { transform: scale(0.985) rotate(0.4deg); }
@@ -353,8 +353,8 @@
   .pad.wood .num { color: #c89050; }
   .pad.drum { --glow: var(--red); }
   .pad.drum .num { color: #c07060; }
-  .pad.stone { --glow: #6f9a82; }
-  .pad.stone .num { color: #9fc3ab; }
+  .pad.bowl { --glow: #b98a3e; }
+  .pad.bowl .num { color: #d8ab5e; }
 
   @keyframes ringPulse {
     0%   { box-shadow: 0 0 0 0 var(--glow), 0 2px 0 rgba(0,0,0,.2); }
@@ -481,7 +481,7 @@
   .row-label.bell { color: var(--bronze-mid); }
   .row-label.wood { color: var(--wood); }
   .row-label.drum { color: var(--red); }
-  .row-label.stone { color: #8fb89b; }
+  .row-label.bowl { color: #cfa45c; }
 
   .step {
     --glow: var(--text-dim); height: 20px; padding: 0;
@@ -495,7 +495,7 @@
   .step.bell { border-radius: 50% / 60%; }
   .step.wood { border-radius: 5px; }
   .step.drum { border-radius: 3px; }
-  .step.stone { border-radius: 5px 5px 5px 2px; }
+  .step.bowl { border-radius: 5px 5px 5px 2px; }
   .step.active.bell {
     --glow: var(--bronze-mid);
     background: radial-gradient(circle at 32% 28%, var(--gold-text-1), var(--bronze-low) 140%);
@@ -707,7 +707,7 @@
         <div class="duo-cols">
           <div class="duo-item">
             <div class="muyu-stage duo-stage" id="qingStage">
-              <button class="muyu-fish qing-stone" id="qingStone" aria-label="敲磬">
+              <button class="muyu-fish qing-bowl" id="qingStone" aria-label="敲磬">
                 <img src="images/qing.webp" alt="磬" draggable="false">
               </button>
               <div class="mallet-wrap qing-mallet-wrap" aria-hidden="true">
@@ -718,7 +718,7 @@
               </div>
             </div>
             <p class="duo-name">磬</p>
-            <p class="duo-hint">轻叩 · 声如玉振</p>
+            <p class="duo-hint">轻叩 · 余音悠远</p>
           </div>
           <div class="duo-item">
             <div class="muyu-stage duo-stage" id="duoMuyuStage">
@@ -812,7 +812,7 @@
     { id: "daluo", label: "大锣", shape: "drum", key: "6" },
     { id: "snare",     label: "军鼓",   shape: "drum",                         key: "7" },
     { id: "kick",      label: "底鼓",   shape: "drum",                         key: "8" },
-    { id: "qing",      label: "磬",     shape: "stone",                        key: "9" },
+    { id: "qing",      label: "磬",     shape: "bowl",                         key: "9" },
     { id: "tanggu",    label: "堂鼓",   shape: "drum",                         key: "0" },
     { id: "yunluo",    label: "云锣",   shape: "bell",                         key: "11" },
     { id: "bangzi",    label: "梆子",   shape: "wood",                         key: "12" }
@@ -1273,21 +1273,22 @@
     sparkle.start(t); sparkle.stop(t + 0.05);
   }
 
-  /* 磬：石质特磬，清越悠长。条形泛音列 1 / 2.76 / 5.40 / 8.93，基频 659.26Hz */
+  /* 磬：佛教铜钵磬。铜钵泛音列 1 / 2.02 / 2.94 / 4.20 / 5.43，基频 659.26Hz；
+     每列一对微失谐正弦形成约 2Hz 拍频（钵音特有的悠悠颤动），余音约 5 秒 */
   function playQing(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 659.26;
     [
-      { r: 1.00, d: 2.8, g: 0.50 },
-      { r: 2.76, d: 1.4, g: 0.20 },
-      { r: 5.40, d: 0.7, g: 0.11 },
-      { r: 8.93, d: 0.4, g: 0.06 }
+      { r: 1.00, d: 5.0, g: 0.50 },
+      { r: 2.02, d: 3.6, g: 0.26 },
+      { r: 2.94, d: 2.6, g: 0.15 },
+      { r: 4.20, d: 1.8, g: 0.09 },
+      { r: 5.43, d: 1.2, g: 0.05 }
     ].forEach(function (p) {
-      [-0.003, 0.003].forEach(function (detune) {
+      [-0.0015, 0.0015].forEach(function (detune) {
         var osc = audioCtx.createOscillator();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(base * p.r * (1 + detune) * 1.03, t);
-        osc.frequency.exponentialRampToValueAtTime(base * p.r * (1 + detune), t + 0.06);
+        osc.frequency.setValueAtTime(base * p.r * (1 + detune), t);
         var g = audioCtx.createGain();
         g.gain.setValueAtTime(p.g * 0.5, t);
         g.gain.exponentialRampToValueAtTime(0.0006, t + p.d);
@@ -1296,16 +1297,16 @@
       });
     });
 
-    /* 敲击石质的短促槌击声 */
+    /* 包布槌头的闷击声 */
     var click = audioCtx.createBufferSource();
     click.buffer = noiseBuf;
     var cf = audioCtx.createBiquadFilter();
-    cf.type = "bandpass"; cf.frequency.value = 2500; cf.Q.value = 1.2;
+    cf.type = "bandpass"; cf.frequency.value = 1200; cf.Q.value = 1.0;
     var cg = audioCtx.createGain();
-    cg.gain.setValueAtTime(0.28, t);
-    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    cg.gain.setValueAtTime(0.16, t);
+    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
     click.connect(cf); cf.connect(cg); cg.connect(out);
-    click.start(t); click.stop(t + 0.06);
+    click.start(t); click.stop(t + 0.12);
   }
 
   /* 堂鼓：中式桶鼓，低沉浑厚，鼓腔共鸣下滑 */
