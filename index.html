@@ -198,11 +198,11 @@
   .muyu-actions { display: flex; gap: 8px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
   .muyu-actions .ghost-btn { padding: 7px 14px; font-size: 11px; letter-spacing: 0.1em; }
 
-  /* ---------- 鼓垫（CSS 绘制，不依赖图片） ---------- */
+  /* ---------- 鼓垫（图片 + CSS 回退） ---------- */
   .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .pad {
     --glow: var(--bronze-mid);
-    position: relative; aspect-ratio: 1.35; border-radius: 10px;
+    position: relative; aspect-ratio: 1; border-radius: 10px;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
     padding: 0; overflow: hidden;
     background:
@@ -211,6 +211,10 @@
     border: 1px solid var(--border);
     box-shadow: 0 2px 0 rgba(40,30,15,0.55), 0 3px 8px rgba(0,0,0,.4), inset 0 1px 0 var(--hi);
     transition: transform .07s ease, box-shadow .07s ease; touch-action: manipulation;
+  }
+  .pad img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; border-radius: inherit; pointer-events: none;
   }
   .pad .num {
     font-size: 19px; font-weight: 700; color: var(--bronze-high);
@@ -398,8 +402,8 @@
     .mode-btn { padding: 5px 0; font-size: 12px; }
     .unit { padding: 8px 10px 8px; border-radius: 12px; }
     .panel { padding: 6px 8px; margin-bottom: 5px; }
-    .pads { gap: 4px; }
-    .pad { aspect-ratio: 1.55; border-radius: 6px; }
+    .pads { gap: 4px; grid-template-columns: repeat(8, 1fr); }
+    .pad { aspect-ratio: 1; border-radius: 6px; }
     .pad .num { font-size: 15px; }
     .pad .name { font-size: 8px; }
     #playBtn { width: 28px; height: 28px; font-size: 11px; }
@@ -424,7 +428,7 @@
     .mode-switch { margin: 0 0 4px; }
     .unit { padding: 6px 8px; }
     .panel { padding: 5px 6px; margin-bottom: 4px; }
-    .pad { aspect-ratio: 1.7; }
+    .pad { aspect-ratio: 1; }
     .step { height: 16px; }
     .muyu-fish { width: 140px; height: 140px; }
     .muyu-fish .mu-char { font-size: 30px; }
@@ -1157,7 +1161,7 @@
     toast("录音中，再点一次停止");
   });
 
-  /* ---------- 鼓垫（CSS 绘制） ---------- */
+  /* ---------- 鼓垫（图片 + CSS 回退） ---------- */
   var padsEl = document.getElementById("pads");
   var padElsById = {};
   var keyToPad = {};
@@ -1193,6 +1197,13 @@
     var btn = document.createElement("button");
     btn.className = "pad " + p.shape;
     btn.setAttribute("aria-label", p.label);
+    /* 图片优先：images/icon-<id>.webp；缺图/加载失败时自动脱落，露出 CSS 绘制的编号 */
+    var img = document.createElement("img");
+    img.src = "images/icon-" + p.id + ".webp";
+    img.alt = p.label;
+    img.draggable = false;
+    img.addEventListener("error", function () { img.remove(); });
+    btn.appendChild(img);
     var num = document.createElement("span");
     num.className = "num";
     num.textContent = p.key;
