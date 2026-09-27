@@ -286,6 +286,39 @@
     100% { opacity: 0; transform: translate(-50%, -46px) scale(1.1); }
   }
   .combo-line { min-height: 16px; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; margin: 2px 0 6px; }
+  /* 木鱼·磬：竖屏上下，横屏并列 */
+  #view-duo { text-align: center; }
+  .duo-cols { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .duo-item { display: flex; flex-direction: column; align-items: center; }
+  .duo-name {
+    font-family: "Songti SC", "STSong", "Noto Serif SC", serif;
+    font-size: 13px; letter-spacing: 0.5em; text-indent: 0.5em;
+    color: var(--bronze-high); margin: 6px 0 2px;
+  }
+  .duo-hint { font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-indent: 0.2em; margin: 0 0 4px; }
+  #qingStone { width: 178px; height: 178px; }
+  #qingStone.noimg {
+    background: radial-gradient(circle at 34% 28%, #5d6f63, #2c3a33 55%, #141b17 100%);
+  }
+  #duoMuyuFish { width: 138px; height: 138px; }
+  .duo-stage .mallet-wrap { transform: scale(0.62); right: -34px; top: -40px; }
+  .duo-stage .qing-mallet-wrap { transform: scale(0.5); right: -28px; top: -34px; }
+  /* 磬槌：轻提缓落，特别温柔 */
+  .qing-mallet.tap { animation: qingTap 0.9s ease-in-out; }
+  @keyframes qingTap {
+    0%   { transform: translate(0, 0) rotate(24deg); }
+    30%  { transform: translate(5px, -7px) rotate(33deg); }
+    48%  { transform: translate(-24px, -3px) rotate(8deg); }
+    70%  { transform: translate(3px, -5px) rotate(29deg); }
+    100% { transform: translate(0, 0) rotate(24deg); }
+  }
+  .qing-stone.sway { animation: qingSway 1.2s ease; }
+  @keyframes qingSway {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(0.985) rotate(0.4deg); }
+    60% { transform: scale(1.004) rotate(-0.2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
   .muyu-actions { display: flex; gap: 8px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
   .muyu-actions .ghost-btn { padding: 7px 14px; font-size: 11px; letter-spacing: 0.1em; }
 
@@ -527,6 +560,9 @@
     .row-label { font-size: 8px; }
     /* 木鱼横屏：左右并列 */
     #view-muyu .muyu-cols { display: flex; align-items: center; gap: 12px; }
+    #view-duo .duo-cols { flex-direction: row; justify-content: center; gap: 34px; }
+    #qingStone { width: 150px; height: 150px; }
+    #duoMuyuFish { width: 120px; height: 120px; }
     #view-muyu .muyu-left { flex: 1; }
     #view-muyu .muyu-right { flex: 1; }
     .muyu-fish { width: 170px; height: 170px; }
@@ -580,6 +616,7 @@
   <nav class="mode-switch">
     <button class="mode-btn" id="modeMuyu">敲木鱼</button>
     <button class="mode-btn" id="modeSeq">钟鼓乐</button>
+    <button class="mode-btn" id="modeDuo">木鱼·磬</button>
   </nav>
 
   <div class="unit">
@@ -658,6 +695,44 @@
               <button class="ghost-btn btn3d" id="posterBtn">功德海报</button>
               <button class="ghost-btn btn3d" id="meritResetBtn">清零</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 木鱼·磬 -->
+    <section id="view-duo" hidden>
+      <div class="panel">
+        <p class="section-label">金声玉振 · 功德无量</p>
+        <div class="duo-cols">
+          <div class="duo-item">
+            <div class="muyu-stage duo-stage" id="qingStage">
+              <button class="muyu-fish qing-stone" id="qingStone" aria-label="敲磬">
+                <img src="images/qing.webp" alt="磬" draggable="false">
+              </button>
+              <div class="mallet-wrap qing-mallet-wrap" aria-hidden="true">
+                <div class="mallet qing-mallet" id="qingMallet">
+                  <div class="mallet-handle"></div>
+                  <div class="mallet-head"></div>
+                </div>
+              </div>
+            </div>
+            <p class="duo-name">磬</p>
+            <p class="duo-hint">轻叩 · 声如玉振</p>
+          </div>
+          <div class="duo-item">
+            <div class="muyu-stage duo-stage" id="duoMuyuStage">
+              <button class="muyu-fish" id="duoMuyuFish" aria-label="敲木鱼">
+                <img src="images/muyu.webp" alt="木鱼" draggable="false">
+              </button>
+              <div class="mallet-wrap" aria-hidden="true">
+                <div class="mallet" id="duoMuyuMallet">
+                  <div class="mallet-handle"></div>
+                  <div class="mallet-head"></div>
+                </div>
+              </div>
+            </div>
+            <p class="duo-name">木鱼</p>
           </div>
         </div>
       </div>
@@ -850,7 +925,7 @@
             state.merit.dayCount = p.merit.dayCount || 0;
             state.merit.maxCombo = p.merit.maxCombo || 0;
           }
-          if (p.view === "muyu" || p.view === "seq") state.view = p.view;
+          if (p.view === "muyu" || p.view === "seq" || p.view === "duo") state.view = p.view;
           return;
         }
       }
@@ -1351,21 +1426,25 @@
   /* 模式切换 */
   var viewMuyu = document.getElementById("view-muyu");
   var viewSeq = document.getElementById("view-seq");
+  var viewDuo = document.getElementById("view-duo");
   var modeMuyuBtn = document.getElementById("modeMuyu");
   var modeSeqBtn = document.getElementById("modeSeq");
+  var modeDuoBtn = document.getElementById("modeDuo");
 
   function setView(v) {
     state.view = v;
-    var isMuyu = v === "muyu";
-    viewMuyu.hidden = !isMuyu;
-    viewSeq.hidden = isMuyu;
-    modeMuyuBtn.classList.toggle("on", isMuyu);
-    modeSeqBtn.classList.toggle("on", !isMuyu);
+    viewMuyu.hidden = v !== "muyu";
+    viewSeq.hidden = v !== "seq";
+    viewDuo.hidden = v !== "duo";
+    modeMuyuBtn.classList.toggle("on", v === "muyu");
+    modeSeqBtn.classList.toggle("on", v === "seq");
+    modeDuoBtn.classList.toggle("on", v === "duo");
     persist();
-    if (!isMuyu) requestAnimationFrame(updateScrollFade);
+    if (v === "seq") requestAnimationFrame(updateScrollFade);
   }
   modeMuyuBtn.addEventListener("click", function () { setView("muyu"); });
   modeSeqBtn.addEventListener("click", function () { setView("seq"); });
+  modeDuoBtn.addEventListener("click", function () { setView("duo"); });
 
   /* ---------- 敲木鱼 ---------- */
   var muyuFish = document.getElementById("muyuFish");
@@ -1385,13 +1464,13 @@
     meritComboEl.textContent = m.maxCombo || 0;
   }
 
-  function floatPlusOne() {
+  function floatPlusOne(stage) {
     var s = document.createElement("span");
     s.className = "float-plus";
     s.textContent = "功德 +1";
     /* 随机左右偏移，避免连击时重叠 */
     s.style.marginLeft = (Math.random() * 70 - 35) + "px";
-    muyuStage.appendChild(s);
+    (stage || muyuStage).appendChild(s);
     s.addEventListener("animationend", function () { s.remove(); });
   }
 
@@ -1399,10 +1478,10 @@
   muyuMallet.addEventListener("animationend", function () { muyuMallet.classList.remove("hit"); });
   muyuFish.addEventListener("animationend", function () { muyuFish.classList.remove("thump"); });
 
-  function shockWave() {
+  function shockWave(stage) {
     var s = document.createElement("span");
     s.className = "shock";
-    muyuStage.appendChild(s);
+    (stage || muyuStage).appendChild(s);
     s.addEventListener("animationend", function () { s.remove(); });
   }
 
@@ -1416,11 +1495,7 @@
   }
 
   /* 木槌视觉落点在动画 40%（0.62s × 40% ≈ 0.25s），声音/鱼身震动/冲击波延迟同步，听感与视觉合一 */
-  var MUYU_IMPACT_DELAY = 230;
-  function knockMuyu() {
-    ensureAudio();
-    if (!audioCtx) return;
-    var knockCtx = audioCtx;
+  function gainMerit() {
     var m = state.merit;
     var t = todayStr();
     if (m.day !== t) { m.day = t; m.dayCount = 0; }
@@ -1433,7 +1508,16 @@
     if (m._combo > (m.maxCombo || 0)) m.maxCombo = m._combo;
     persist();
     renderMerit();
-    floatPlusOne();
+    return m;
+  }
+
+  var MUYU_IMPACT_DELAY = 230;
+  function knockMuyu() {
+    ensureAudio();
+    if (!audioCtx) return;
+    var knockCtx = audioCtx;
+    var m = gainMerit();
+    floatPlusOne(muyuStage);
     triggerPulse(muyuFish);
     /* 木槌动画立即起跑（先蓄力上扬再砸下） */
     muyuMallet.classList.remove("hit");
@@ -1445,7 +1529,7 @@
       muyuFish.classList.remove("thump");
       void muyuFish.offsetWidth;
       muyuFish.classList.add("thump");
-      shockWave();
+      shockWave(muyuStage);
     }, MUYU_IMPACT_DELAY);
     comboLine.textContent = m._combo >= 5 ? "连击 ×" + m._combo + " · 心诚则灵" : "";
   }
@@ -1455,6 +1539,83 @@
     knockMuyu();
   });
   muyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockMuyu(); });
+
+  /* ---------- 木鱼·磬页 ---------- */
+  var qingStage = document.getElementById("qingStage");
+  var qingStone = document.getElementById("qingStone");
+  var qingMallet = document.getElementById("qingMallet");
+  var duoMuyuStage = document.getElementById("duoMuyuStage");
+  var duoMuyuFish = document.getElementById("duoMuyuFish");
+  var duoMuyuMallet = document.getElementById("duoMuyuMallet");
+  wirePulse(qingStone);
+  wirePulse(duoMuyuFish);
+
+  [ [qingStone, "qing"], [duoMuyuFish, "muyu"] ].forEach(function (pair) {
+    var img = pair[0].querySelector("img");
+    if (img) {
+      img.addEventListener("error", function () {
+        pair[0].classList.add("noimg");
+        img.remove();
+      });
+    }
+  });
+
+  qingMallet.addEventListener("animationend", function () { qingMallet.classList.remove("tap"); });
+  qingStone.addEventListener("animationend", function () { qingStone.classList.remove("sway"); });
+  duoMuyuMallet.addEventListener("animationend", function () { duoMuyuMallet.classList.remove("hit"); });
+  duoMuyuFish.addEventListener("animationend", function () { duoMuyuFish.classList.remove("thump"); });
+
+  /* 磬槌落点在动画 48%（0.9s × 48% ≈ 0.43s），轻声 + 微晃 + 柔波纹同步 */
+  var QING_IMPACT_DELAY = 420;
+  function knockQing() {
+    ensureAudio();
+    if (!audioCtx) return;
+    var knockCtx = audioCtx;
+    gainMerit();
+    floatPlusOne(qingStage);
+    triggerPulse(qingStone);
+    qingMallet.classList.remove("tap");
+    void qingMallet.offsetWidth;
+    qingMallet.classList.add("tap");
+    setTimeout(function () {
+      try { playSound("qing", knockCtx.currentTime, 0.5); } catch (e) {}
+      qingStone.classList.remove("sway");
+      void qingStone.offsetWidth;
+      qingStone.classList.add("sway");
+      shockWave(qingStage);
+    }, QING_IMPACT_DELAY);
+  }
+
+  /* 本页木鱼：沿用大力敲法，尺寸缩小而已 */
+  function knockDuoMuyu() {
+    ensureAudio();
+    if (!audioCtx) return;
+    var knockCtx = audioCtx;
+    gainMerit();
+    floatPlusOne(duoMuyuStage);
+    triggerPulse(duoMuyuFish);
+    duoMuyuMallet.classList.remove("hit");
+    void duoMuyuMallet.offsetWidth;
+    duoMuyuMallet.classList.add("hit");
+    setTimeout(function () {
+      try { playSound("wood", knockCtx.currentTime, 0.9); } catch (e) {}
+      duoMuyuFish.classList.remove("thump");
+      void duoMuyuFish.offsetWidth;
+      duoMuyuFish.classList.add("thump");
+      shockWave(duoMuyuStage);
+    }, MUYU_IMPACT_DELAY);
+  }
+
+  qingStone.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    knockQing();
+  });
+  qingStone.addEventListener("click", function (e) { if (e.detail === 0) knockQing(); });
+  duoMuyuFish.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    knockDuoMuyu();
+  });
+  duoMuyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockDuoMuyu(); });
 
   document.getElementById("meritResetBtn").addEventListener("click", function () {
     state.merit = { total: 0, day: todayStr(), dayCount: 0, maxCombo: 0 };
@@ -1655,7 +1816,7 @@
     var id = keyToPad[e.key];
     if (!id) return;
     if (state.view === "seq") startRoll(id);
-    else if (id === "wood") knockMuyu();
+    else if (id === "wood") { if (state.view === "duo") knockDuoMuyu(); else knockMuyu(); }
   });
   window.addEventListener("keyup", function (e) {
     var id = keyToPad[e.key];
