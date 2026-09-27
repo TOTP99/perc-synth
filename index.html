@@ -320,6 +320,8 @@
   .pad.wood .num { color: #c89050; }
   .pad.drum { --glow: var(--red); }
   .pad.drum .num { color: #c07060; }
+  .pad.stone { --glow: #6f9a82; }
+  .pad.stone .num { color: #9fc3ab; }
 
   @keyframes ringPulse {
     0%   { box-shadow: 0 0 0 0 var(--glow), 0 2px 0 rgba(0,0,0,.2); }
@@ -446,6 +448,7 @@
   .row-label.bell { color: var(--bronze-mid); }
   .row-label.wood { color: var(--wood); }
   .row-label.drum { color: var(--red); }
+  .row-label.stone { color: #8fb89b; }
 
   .step {
     --glow: var(--text-dim); height: 20px; padding: 0;
@@ -459,6 +462,7 @@
   .step.bell { border-radius: 50% / 60%; }
   .step.wood { border-radius: 5px; }
   .step.drum { border-radius: 3px; }
+  .step.stone { border-radius: 5px 5px 5px 2px; }
   .step.active.bell {
     --glow: var(--bronze-mid);
     background: radial-gradient(circle at 32% 28%, var(--gold-text-1), var(--bronze-low) 140%);
@@ -510,7 +514,7 @@
     .mode-btn { padding: 5px 0 7px; font-size: 12px; flex-basis: 120px; }
     .unit { padding: 8px 10px 8px; border-radius: 12px; }
     .panel { padding: 6px 8px; margin-bottom: 5px; }
-    .pads { gap: 4px; grid-template-columns: repeat(8, 1fr); }
+    .pads { gap: 4px; grid-template-columns: repeat(6, 1fr); }
     .pad { aspect-ratio: 1; border-radius: 6px; }
     .pad .num { font-size: 15px; }
     .pad .name { font-size: 8px; }
@@ -732,7 +736,11 @@
     { id: "bo",    label: "钹",   shape: "drum", key: "5" },
     { id: "daluo", label: "大锣", shape: "drum", key: "6" },
     { id: "snare",     label: "军鼓",   shape: "drum",                         key: "7" },
-    { id: "kick",      label: "底鼓",   shape: "drum",                         key: "8" }
+    { id: "kick",      label: "底鼓",   shape: "drum",                         key: "8" },
+    { id: "qing",      label: "磬",     shape: "stone",                        key: "9" },
+    { id: "tanggu",    label: "堂鼓",   shape: "drum",                         key: "0" },
+    { id: "yunluo",    label: "云锣",   shape: "bell",                         key: "11" },
+    { id: "bangzi",    label: "梆子",   shape: "wood",                         key: "12" }
   ];
 
   var TRACK_BY_ID = {};
@@ -748,13 +756,34 @@
                wood: [1,3,5,7,9,11,13,15], bellHigh: [0,8], bellLow: [12] } },
     { name: "慢长锤", tempo: 72, desc: "一锤定音",
       steps: { kick: [0,8], bellLow: [0,8], bellMid: [4,12],
-               wood: [0,4,8,12], daluo: [15] } },
+               wood: [0,4,8,12], daluo: [15], qing: [8] } },
     { name: "夜深沉", tempo: 66, desc: "钟磬悠远",
       steps: { bellHigh: [0,6,10], bellMid: [2,8,14], bellLow: [4,12],
-               wood: [8], bo: [12] } },
+               wood: [8], bo: [12], qing: [2,10] } },
     { name: "龙腾虎跃", tempo: 132, desc: "欢腾热烈",
       steps: { kick: [0,4,8,12,14], snare: [4,12], bo: [2,6,10,14], daluo: [0,8],
-               wood: [2,6,10,14], bellMid: [0,8], bellHigh: [10] } }
+               wood: [2,6,10,14], bellMid: [0,8], bellHigh: [10] } },
+    { name: "晨钟暮鼓", tempo: 60, desc: "寺院晨昏",
+      steps: { bellLow: [0], tanggu: [8], qing: [4,12],
+               wood: [6,14], bellMid: [8] } },
+    { name: "禅定", tempo: 60, desc: "静坐观心",
+      steps: { qing: [0,8], bellHigh: [12], bellMid: [8],
+               wood: [0,4,8,12] } },
+    { name: "法会", tempo: 96, desc: "仪仗行进",
+      steps: { bo: [0,8], tanggu: [0,4,8,12], daluo: [0],
+               wood: [2,6,10,14], qing: [14] } },
+    { name: "秧歌", tempo: 132, desc: "东北秧歌",
+      steps: { tanggu: [0,4,8,12], bo: [2,6,10,14],
+               bangzi: [0,2,4,6,8,10,12,14], daluo: [0] } },
+    { name: "安塞腰鼓", tempo: 144, desc: "黄土豪情",
+      steps: { tanggu: [0,2,4,6,8,10,12,14], bo: [0,8],
+               bangzi: [4,12], daluo: [14] } },
+    { name: "狮鼓", tempo: 126, desc: "广东醒狮",
+      steps: { tanggu: [0,6,8,14], daluo: [0,8], bo: [4,12],
+               bangzi: [2,7,10,15] } },
+    { name: "丝路云锣", tempo: 108, desc: "大漠驼铃",
+      steps: { yunluo: [0,6,8,14], bangzi: [2,6,10,14],
+               tanggu: [8], qing: [6,14] } }
   ];
 
   function emptySteps() {
@@ -850,6 +879,8 @@
     steps.bellMid[8] = true;
     steps.bo[8] = true;
     steps.daluo[0] = true;
+    steps.qing[14] = true;
+    steps.tanggu[12] = true;
     state.slots[0] = { tempo: 96, steps: steps };
   }
   if (isSlotEmpty(state.slots[0])) seedDefaultPattern();
@@ -1167,12 +1198,146 @@
     sparkle.start(t); sparkle.stop(t + 0.05);
   }
 
+  /* 磬：石质特磬，清越悠长。条形泛音列 1 / 2.76 / 5.40 / 8.93，基频 659.26Hz */
+  function playQing(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 659.26;
+    [
+      { r: 1.00, d: 2.8, g: 0.50 },
+      { r: 2.76, d: 1.4, g: 0.20 },
+      { r: 5.40, d: 0.7, g: 0.11 },
+      { r: 8.93, d: 0.4, g: 0.06 }
+    ].forEach(function (p) {
+      [-0.003, 0.003].forEach(function (detune) {
+        var osc = audioCtx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(base * p.r * (1 + detune) * 1.03, t);
+        osc.frequency.exponentialRampToValueAtTime(base * p.r * (1 + detune), t + 0.06);
+        var g = audioCtx.createGain();
+        g.gain.setValueAtTime(p.g * 0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.0006, t + p.d);
+        osc.connect(g); g.connect(out);
+        osc.start(t); osc.stop(t + p.d + 0.05);
+      });
+    });
+
+    /* 敲击石质的短促槌击声 */
+    var click = audioCtx.createBufferSource();
+    click.buffer = noiseBuf;
+    var cf = audioCtx.createBiquadFilter();
+    cf.type = "bandpass"; cf.frequency.value = 2500; cf.Q.value = 1.2;
+    var cg = audioCtx.createGain();
+    cg.gain.setValueAtTime(0.28, t);
+    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    click.connect(cf); cf.connect(cg); cg.connect(out);
+    click.start(t); click.stop(t + 0.06);
+  }
+
+  /* 堂鼓：中式桶鼓，低沉浑厚，鼓腔共鸣下滑 */
+  function playTanggu(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 78;
+    [
+      { r: 1.00, d: 0.65, g: 0.60 },
+      { r: 1.51, d: 0.40, g: 0.30 },
+      { r: 2.02, d: 0.28, g: 0.18 }
+    ].forEach(function (p) {
+      [-0.004, 0.004].forEach(function (detune) {
+        var osc = audioCtx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(base * p.r * (1 + detune) * 1.35, t);
+        osc.frequency.exponentialRampToValueAtTime(base * p.r * (1 + detune), t + 0.09);
+        var g = audioCtx.createGain();
+        g.gain.setValueAtTime(p.g * 0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.0006, t + p.d);
+        osc.connect(g); g.connect(out);
+        osc.start(t); osc.stop(t + p.d + 0.05);
+      });
+    });
+    /* 鼓面拍击 */
+    var slap = audioCtx.createBufferSource();
+    slap.buffer = noiseBuf;
+    var sf = audioCtx.createBiquadFilter();
+    sf.type = "bandpass"; sf.frequency.value = 420; sf.Q.value = 0.8;
+    var sg = audioCtx.createGain();
+    sg.gain.setValueAtTime(0.4, t);
+    sg.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    slap.connect(sf); sf.connect(sg); sg.connect(out);
+    slap.start(t); slap.stop(t + 0.1);
+  }
+
+  /* 云锣：成排小锣，明亮泛音，锣声特有的上扬绽开 */
+  function playYunluo(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 880;
+    [
+      { r: 1.00, d: 1.8, g: 0.40 },
+      { r: 1.48, d: 1.2, g: 0.24 },
+      { r: 2.09, d: 0.8, g: 0.14 },
+      { r: 2.94, d: 0.5, g: 0.08 }
+    ].forEach(function (p) {
+      [-0.003, 0.003].forEach(function (detune) {
+        var osc = audioCtx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(base * p.r * (1 + detune) * 0.98, t);
+        osc.frequency.exponentialRampToValueAtTime(base * p.r * (1 + detune), t + 0.15);
+        var g = audioCtx.createGain();
+        g.gain.setValueAtTime(p.g * 0.5, t);
+        g.gain.exponentialRampToValueAtTime(0.0006, t + p.d);
+        osc.connect(g); g.connect(out);
+        osc.start(t); osc.stop(t + p.d + 0.05);
+      });
+    });
+    /* 锣面金属光泽 */
+    var shim = audioCtx.createBufferSource();
+    shim.buffer = noiseBuf;
+    var hf = audioCtx.createBiquadFilter();
+    hf.type = "highpass"; hf.frequency.value = 6000;
+    var hg = audioCtx.createGain();
+    hg.gain.setValueAtTime(0.1, t);
+    hg.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    shim.connect(hf); hf.connect(hg); hg.connect(out);
+    shim.start(t); shim.stop(t + 0.32);
+  }
+
+  /* 梆子：硬木梆，高亢清脆的短促一击 */
+  function playBangzi(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    [
+      { freq: 2200, decay: 0.045, gain: 0.5 },
+      { freq: 3300, decay: 0.03,  gain: 0.25 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(p.freq * 1.25, t);
+      osc.frequency.exponentialRampToValueAtTime(p.freq, t + 0.01);
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.gain, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.decay);
+      osc.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.decay + 0.02);
+    });
+    var snap = audioCtx.createBufferSource();
+    snap.buffer = noiseBuf;
+    var nf = audioCtx.createBiquadFilter();
+    nf.type = "bandpass"; nf.frequency.value = 3500; nf.Q.value = 2;
+    var ng = audioCtx.createGain();
+    ng.gain.setValueAtTime(0.3, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+    snap.connect(nf); nf.connect(ng); ng.connect(out);
+    snap.start(t); snap.stop(t + 0.04);
+  }
+
   var PLAYERS = {
     kick: playKick,
     snare: playSnare,
     bo: playBo,
     daluo: playDaluo,
-    wood: playWood
+    wood: playWood,
+    qing: playQing,
+    tanggu: playTanggu,
+    yunluo: playYunluo,
+    bangzi: playBangzi
   };
 
   function playSound(id, t, vel) {
@@ -1813,7 +1978,8 @@
   document.getElementById("randomBtn").addEventListener("click", function () {
     var density = {
       kick: 0.28, snare: 0.22, bo: 0.3, daluo: 0.1,
-      wood: 0.18, bellHigh: 0.14, bellMid: 0.14, bellLow: 0.1
+      wood: 0.18, bellHigh: 0.14, bellMid: 0.14, bellLow: 0.1, qing: 0.08,
+      tanggu: 0.12, yunluo: 0.08, bangzi: 0.15
     };
     var slot = activeSlot();
     TRACKS.forEach(function (track) {
