@@ -301,15 +301,8 @@
     background: radial-gradient(circle at 34% 28%, #a87f45, #5c3f1c 55%, #241a0c 100%);
   }
   .duo-stage .qing-mallet-wrap { transform: scale(0.58); right: -30px; top: -36px; }
-  /* 磬槌：轻提缓落，特别温柔 */
-  .qing-mallet.tap { animation: qingTap 0.9s ease-in-out; }
-  @keyframes qingTap {
-    0%   { transform: translate(0, 0) rotate(24deg); }
-    30%  { transform: translate(5px, -7px) rotate(33deg); }
-    48%  { transform: translate(-24px, -3px) rotate(8deg); }
-    70%  { transform: translate(3px, -5px) rotate(29deg); }
-    100% { transform: translate(0, 0) rotate(24deg); }
-  }
+  /* 磬槌：与木鱼槌一样的做法——蓄力上扬 → 大力砸下打到磬上 → 弹簧回弹 */
+  .qing-mallet.tap { animation: malletHit 0.62s linear; }
   /* 磬槌改金属制：钢柄 + 金属槌头 */
   .qing-mallet .mallet-handle {
     background: linear-gradient(180deg, #f2f5f8, #aeb8c4 45%, #646e7a);
@@ -823,6 +816,7 @@
   <footer>晨钟暮鼓 · 功德无量<span class="foot-sub">节拍每四步分组 · A/B/C · 速度、混音与功德保存在本机 · 预置锣鼓点为风格化编配 · TP 制作</span></footer>
   <div class="toast" id="toast"></div>
 
+<script src="audio-fx.js"></script>
 <script>
 (function () {
   "use strict";
@@ -1110,6 +1104,14 @@
     limiter.release.value = 0.12;
     masterGain.connect(limiter);
     limiter.connect(audioCtx.destination);
+    /* 音质增强链（audio-fx.js）：有则用，无则保持原链 */
+    try {
+      if (window.PercFX) {
+        PercFX.registerCtx(audioCtx);
+        PercFX.enhanceChain(audioCtx, masterGain);
+        /* enhanceChain 已重接 masterGain → EQ/混响/限幅 → destination */
+      }
+    } catch (e) {}
     TRACKS.forEach(function (t) {
       var g = audioCtx.createGain();
       var vol = state.trackVol[t.id];
