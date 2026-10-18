@@ -6,7 +6,7 @@
 <title>钟鼓楼 · 国风打击乐</title>
 <style>
   :root {
-    /* 禅夜钟鼓楼：墨夜为底 · 紫檀为龛 · 鎏金为饰 · 朱砂点睛 */
+
     --page-bg: #0f0c09;
     --case-1: #4a2c1a;
     --case-2: #33200f;
@@ -66,7 +66,7 @@
     letter-spacing: 0.42em; text-indent: 0.42em;
     transition: font-size .3s ease, margin .3s ease, opacity .3s ease;
   }
-  /* 回纹分隔：双线 + 菱形 */
+
   .fret { display: flex; align-items: center; gap: 8px; margin: 0 26px 10px; }
   .fret::before, .fret::after {
     content: ""; flex: 1; height: 1px;
@@ -85,11 +85,10 @@
     outline: 1.5px solid var(--focus); outline-offset: 1px;
   }
 
-  /* 模式切换 */
   .mode-switch {
     display: flex; gap: 10px; justify-content: center; margin: 0 0 16px;
   }
-  /* 幡签形：方头 + 底部尖尾 */
+
   .mode-btn {
     position: relative; flex: 0 1 150px; padding: 8px 0 10px; font-size: 13px;
     letter-spacing: 0.34em; text-indent: 0.34em;
@@ -153,7 +152,7 @@
     padding: 10px; margin-bottom: 8px;
     transition: padding .3s ease, margin .3s ease;
   }
-  /* 签题：两侧金线 */
+
   .section-label {
     display: flex; align-items: center; gap: 10px;
     font-size: 11px; color: var(--bronze-high); margin: 0 0 8px;
@@ -187,9 +186,8 @@
     transform: translateY(1px);
   }
 
-  /* ---------- 木鱼模式 ---------- */
   #view-muyu { text-align: center; }
-  /* 功德簿 */
+
   .merit-board {
     display: flex; justify-content: center; gap: 10px; margin: 2px 0 10px;
   }
@@ -208,7 +206,7 @@
   }
   .merit-cap { font-size: 9px; color: var(--text-dim); letter-spacing: 0.28em; text-indent: 0.28em; margin-top: 2px; }
   .muyu-stage { position: relative; display: inline-block; margin: 6px 0 0; }
-  /* 莲花座 */
+
   .lotus { position: absolute; left: 50%; bottom: -14px; width: 190px; transform: translateX(-50%); z-index: 0; opacity: 0.95; pointer-events: none; }
   .lotus svg { display: block; width: 100%; height: auto; }
   .muyu-fish { position: relative; z-index: 1; }
@@ -231,7 +229,7 @@
     60% { transform: scale(1.015); }
     100% { transform: scale(1); }
   }
-  /* 木槌：柄在右上，槌头悬于鱼身上方；敲击 = 小幅蓄力上扬 → 逆时针 88° 大力砸下（根部随之前冲）→ 弹簧回弹 */
+
   .mallet-wrap {
     position: absolute; right: -46px; top: -52px;
     width: 170px; height: 170px; z-index: 6; pointer-events: none;
@@ -255,7 +253,7 @@
     box-shadow: inset 0 1px 2px rgba(255,220,160,.4), 0 2px 4px rgba(0,0,0,.5);
   }
   .mallet-head {
-    /* 槌头长在柄的打击端（左端），随柄一起转动，像真槌子 */
+
     position: absolute; left: -30px; top: 50%;
     transform: translateY(-50%);
     width: 40px; height: 40px; border-radius: 50%;
@@ -265,7 +263,7 @@
     border: 1px solid rgba(90,70,50,.45);
     box-shadow: 0 3px 6px rgba(0,0,0,.5), inset 0 -3px 6px rgba(120,100,80,.35);
   }
-  /* 敲击冲击波纹 */
+
   .shock {
     position: absolute; left: 50%; top: 50%; width: 100%; aspect-ratio: 1/1;
     border-radius: 50%; border: 3px solid rgba(216,200,140,0.75);
@@ -289,7 +287,7 @@
     100% { opacity: 0; transform: translate(-50%, -46px) scale(1.1); }
   }
   .combo-line { min-height: 16px; font-size: 11px; color: var(--accent); letter-spacing: 0.15em; margin: 2px 0 6px; }
-  /* 磬：独占一页 */
+
   #view-duo { text-align: center; }
   .duo-cols { display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .duo-item { display: flex; flex-direction: column; align-items: center; }
@@ -304,9 +302,9 @@
     background: radial-gradient(circle at 34% 28%, #a87f45, #5c3f1c 55%, #241a0c 100%);
   }
   .duo-stage .qing-mallet-wrap { transform: scale(0.58); right: -30px; top: -36px; }
-  /* 磬槌：与木鱼槌一样的做法——蓄力上扬 → 大力砸下打到磬上 → 弹簧回弹 */
+
   .qing-mallet.tap { animation: malletHit 0.62s linear; }
-  /* 磬槌改金属制：钢柄 + 金属槌头 */
+
   .qing-mallet .mallet-handle {
     background: linear-gradient(180deg, #f2f5f8, #aeb8c4 45%, #646e7a);
     box-shadow: inset 0 1px 2px rgba(255,255,255,.75), 0 2px 4px rgba(0,0,0,.5);
@@ -326,7 +324,6 @@
   .muyu-actions { display: flex; gap: 8px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
   .muyu-actions .ghost-btn { padding: 7px 14px; font-size: 11px; letter-spacing: 0.1em; }
 
-  /* ---------- 鼓垫（图片 + CSS 回退）：深漆描金 ---------- */
   .pads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .pad {
     --glow: var(--bronze-mid);
@@ -359,7 +356,7 @@
   .pad.drum .num { color: #c07060; }
   .pad.bowl { --glow: #b98a3e; }
   .pad.bowl .num { color: #d8ab5e; }
-  /* 地域：西方蓝边 / 非洲红边 */
+
   .pad.west { border-color: rgba(96,165,250,.65); --glow: #60a5fa; }
   .pad.west .num { color: #93c5fd; }
   .pad.afr { border-color: rgba(248,113,113,.65); --glow: #f87171; }
@@ -372,7 +369,7 @@
   .pulse { animation: ringPulse .35s ease-out; }
 
   .transport { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  /* 堂鼓钮：朱砂鼓面 + 鎏金鼓箍 */
+
   #playBtn {
     width: 40px; height: 40px; border-radius: 50%;
     background: radial-gradient(circle at 34% 30%, #c8553c, var(--red) 55%, var(--red-deep) 130%);
@@ -387,7 +384,7 @@
   #playBtn .pause-bars { display: flex; gap: 3px; align-items: center; }
   #playBtn .pause-bars i { display: block; width: 3px; height: 11px; border-radius: 1px; background: var(--gold-text-1); }
   #composeBtn.on { color: #f5d67b; border-color: #b8862f; }
-  /* 曲谱 */
+
   .score-strip {
     display: flex; gap: 4px; overflow-x: auto; align-items: center;
     min-height: 30px; max-height: 78px; padding: 4px 2px;
@@ -422,7 +419,6 @@
   .feel-wrap { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 90px; margin-left: 4px; }
   .feel-wrap input[type="range"] { flex: 1; }
 
-  /* 预置锣鼓点 */
   .preset-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; -webkit-overflow-scrolling: touch; }
   .preset-tab {
     flex-shrink: 0; padding: 4px 12px; font-size: 11px; letter-spacing: 0.12em; border-radius: 999px;
@@ -434,7 +430,7 @@
     display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 4px;
     -webkit-overflow-scrolling: touch;
   }
-  /* 竹签：签筒抽签意境 */
+
   .preset-chip {
     position: relative; flex-shrink: 0; padding: 8px 14px 8px 16px; font-size: 12px; letter-spacing: 0.1em;
     border-radius: 4px 10px 10px 4px;
@@ -592,7 +588,7 @@
     .step { height: 18px; }
     .sequencer { grid-template-columns: 42px repeat(16, minmax(18px, 1fr)); gap: 3px; min-width: 420px; }
     .row-label { font-size: 8px; }
-    /* 木鱼横屏：左右并列 */
+
     #view-muyu .muyu-cols { display: flex; align-items: center; gap: 12px; }
     #view-duo .duo-cols { flex-direction: row; justify-content: center; gap: 34px; }
     #qingStone { width: 176px; height: 176px; }
@@ -818,7 +814,7 @@
   <div class="toast" id="toast"></div>
 
 <script src="audio-fx.js"></script>
-<script>/* audio-fx.js 缺失兜底：右下角灰灯 */
+<script>
 window.addEventListener('DOMContentLoaded', function () {
   try {
     if (typeof window.PercFX === 'undefined' && !document.getElementById('percFxDot')) {
@@ -883,9 +879,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var TRACK_BY_ID = {};
   TRACKS.forEach(function (t) { TRACK_BY_ID[t.id] = t; });
-
-  /* 预置锣鼓点：风格化编配（非权威锣鼓经记谱），点一下载入当前图案槽 */
-    /* 预置锣鼓点已拆分到 presets.js */
 
   function emptySteps() {
     var o = {};
@@ -967,7 +960,7 @@ window.addEventListener('DOMContentLoaded', function () {
           return;
         }
       }
-      /* 老版本迁移：perc-synth-v2 → zhonggulou-v1 */
+
       var legacy = localStorage.getItem(LEGACY_KEY);
       if (legacy) {
         var lp = JSON.parse(legacy);
@@ -1023,7 +1016,6 @@ window.addEventListener('DOMContentLoaded', function () {
     el.classList.add("pulse");
   }
 
-  /* Audio */
   var audioCtx = null, noiseBuf = null, masterGain = null, trackGains = {};
 
   function makeNoiseBuffer() {
@@ -1042,7 +1034,7 @@ window.addEventListener('DOMContentLoaded', function () {
     noiseBuf = makeNoiseBuffer();
     masterGain = audioCtx.createGain();
     masterGain.gain.value = state.masterVol > 0 ? state.masterVol : 0.9;
-    /* 总线限幅：多轨叠加（钟/镲/鼓）时防止爆音 */
+
     var limiter = audioCtx.createDynamicsCompressor();
     limiter.threshold.value = -8;
     limiter.knee.value = 10;
@@ -1051,12 +1043,12 @@ window.addEventListener('DOMContentLoaded', function () {
     limiter.release.value = 0.12;
     masterGain.connect(limiter);
     limiter.connect(audioCtx.destination);
-    /* 音质增强链（audio-fx.js）：有则用，无则保持原链 */
+
     try {
       if (window.PercFX) {
         PercFX.registerCtx(audioCtx);
         PercFX.enhanceChain(audioCtx, masterGain);
-        /* enhanceChain 已重接 masterGain → EQ/混响/限幅 → destination */
+
       }
     } catch (e) {}
     TRACKS.forEach(function (t) {
@@ -1088,9 +1080,16 @@ window.addEventListener('DOMContentLoaded', function () {
   });
 
   function voiceBus(dest, vel) {
+    var v = (vel == null) ? 0.8 : vel;
     var vg = audioCtx.createGain();
-    vg.gain.value = vel;
-    vg.connect(dest);
+    vg.gain.value = v;
+    var vc = Math.max(0.05, Math.min(1, v));
+    var bright = audioCtx.createBiquadFilter();
+    bright.type = "lowpass";
+    bright.frequency.value = 1200 + vc * 9000;
+    bright.Q.value = 0.5;
+    vg.connect(bright);
+    bright.connect(dest);
     return vg;
   }
 
@@ -1151,7 +1150,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 钹：中国式对击钹，明亮炸开，余音约 1 秒 */
   function playBo(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var bus = audioCtx.createGain();
@@ -1193,11 +1191,9 @@ window.addEventListener('DOMContentLoaded', function () {
     crash.start(t); crash.stop(t + 0.25);
   }
 
-  /* 大锣：锣声标志性下滑，余音悠长 */
   function playDaluo(t, dest, vel) {
     var out = voiceBus(dest, vel);
 
-    /* 槌击 */
     var th = audioCtx.createBufferSource();
     th.buffer = noiseBuf;
     var tf = audioCtx.createBiquadFilter();
@@ -1313,8 +1309,6 @@ window.addEventListener('DOMContentLoaded', function () {
     sparkle.start(t); sparkle.stop(t + 0.05);
   }
 
-  /* 磬：佛教铜钵磬。铜钵泛音列 1 / 2.02 / 2.94 / 4.20 / 5.43，基频 659.26Hz；
-     每列一对微失谐正弦形成约 2Hz 拍频（钵音特有的悠悠颤动），余音约 5 秒 */
   function playQing(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 659.26;
@@ -1337,7 +1331,6 @@ window.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    /* 包布槌头的闷击声 */
     var click = audioCtx.createBufferSource();
     click.buffer = noiseBuf;
     var cf = audioCtx.createBiquadFilter();
@@ -1349,7 +1342,6 @@ window.addEventListener('DOMContentLoaded', function () {
     click.start(t); click.stop(t + 0.12);
   }
 
-  /* 堂鼓：中式桶鼓，低沉浑厚，鼓腔共鸣下滑 */
   function playTanggu(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 78;
@@ -1370,7 +1362,7 @@ window.addEventListener('DOMContentLoaded', function () {
         osc.start(t); osc.stop(t + p.d + 0.05);
       });
     });
-    /* 鼓面拍击 */
+
     var slap = audioCtx.createBufferSource();
     slap.buffer = noiseBuf;
     var sf = audioCtx.createBiquadFilter();
@@ -1382,7 +1374,6 @@ window.addEventListener('DOMContentLoaded', function () {
     slap.start(t); slap.stop(t + 0.1);
   }
 
-  /* 云锣：成排小锣，明亮泛音，锣声特有的上扬绽开 */
   function playYunluo(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 880;
@@ -1404,7 +1395,7 @@ window.addEventListener('DOMContentLoaded', function () {
         osc.start(t); osc.stop(t + p.d + 0.05);
       });
     });
-    /* 锣面金属光泽 */
+
     var shim = audioCtx.createBufferSource();
     shim.buffer = noiseBuf;
     var hf = audioCtx.createBiquadFilter();
@@ -1416,7 +1407,6 @@ window.addEventListener('DOMContentLoaded', function () {
     shim.start(t); shim.stop(t + 0.32);
   }
 
-  /* 梆子：硬木梆，高亢清脆的短促一击 */
   function playBangzi(t, dest, vel) {
     var out = voiceBus(dest, vel);
     [
@@ -1444,7 +1434,6 @@ window.addEventListener('DOMContentLoaded', function () {
     snap.start(t); snap.stop(t + 0.04);
   }
 
-  /* 板鼓：京剧武场指挥，单面小鼓，鼓面紧绷，干脆利落的"哒" */
   function playBangu(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 240;
@@ -1465,7 +1454,7 @@ window.addEventListener('DOMContentLoaded', function () {
         osc.start(t); osc.stop(t + p.d + 0.05);
       });
     });
-    /* 竹签敲击的脆响 */
+
     var snap = audioCtx.createBufferSource();
     snap.buffer = noiseBuf;
     var nf = audioCtx.createBiquadFilter();
@@ -1477,7 +1466,6 @@ window.addEventListener('DOMContentLoaded', function () {
     snap.start(t); snap.stop(t + 0.06);
   }
 
-  /* 小锣：戏曲高音小锣，"哐"的一声脆亮，下滑比大锣更快更短 */
   function playXiaoluo(t, dest, vel) {
     var out = voiceBus(dest, vel);
 
@@ -1513,7 +1501,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 排鼓：五个音高的民族鼓组，取中音鼓，温润带音高的"咚" */
   function playPaigu(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 174;
@@ -1545,7 +1532,6 @@ window.addEventListener('DOMContentLoaded', function () {
     slap.start(t); slap.stop(t + 0.09);
   }
 
-  /* 大鼓：战鼓，低沉浑厚的"咚——"，余音长 */
   function playDagu(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 52;
@@ -1567,7 +1553,7 @@ window.addEventListener('DOMContentLoaded', function () {
         osc.start(t); osc.stop(t + p.d + 0.05);
       });
     });
-    /* 大鼓槌的闷击 */
+
     var thump = audioCtx.createBufferSource();
     thump.buffer = noiseBuf;
     var tf = audioCtx.createBiquadFilter();
@@ -1579,7 +1565,6 @@ window.addEventListener('DOMContentLoaded', function () {
     thump.start(t); thump.stop(t + 0.14);
   }
 
-  /* 定音鼓：交响乐定音鼓，带音高的浑厚"咚"，铜腔共鸣 */
   function playTimpani(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 98;
@@ -1612,7 +1597,6 @@ window.addEventListener('DOMContentLoaded', function () {
     mallet.start(t); mallet.stop(t + 0.1);
   }
 
-  /* 吊镲：悬挂式镲片，鼓棒一击，明亮炸开但比对钹收得快 */
   function playCrash(t, dest, vel) {
     var out = voiceBus(dest, vel);
 
@@ -1652,7 +1636,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 铃鼓：鼓面一拍 + 一圈小镲片的清脆抖动 */
   function playTamb(t, dest, vel) {
     var out = voiceBus(dest, vel);
 
@@ -1677,7 +1660,6 @@ window.addEventListener('DOMContentLoaded', function () {
     jingle.start(t); jingle.stop(t + 0.18);
   }
 
-  /* 康加鼓：拉丁空音，圆润共鸣，比板鼓低、比排鼓亮 */
   function playConga(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 208;
@@ -1709,7 +1691,6 @@ window.addEventListener('DOMContentLoaded', function () {
     slap.start(t); slap.stop(t + 0.08);
   }
 
-  /* 金贝鼓：非洲高脚杯鼓，低音"咚"带标志性滑音 */
   function playDjembe(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 65;
@@ -1741,7 +1722,6 @@ window.addEventListener('DOMContentLoaded', function () {
     skin.start(t); skin.stop(t + 0.11);
   }
 
-  /* 谈话鼓：沙漏形手鼓，挤压系绳改变音高——标志性上滑"说话"声 */
   function playTalkdrum(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var osc = audioCtx.createOscillator();
@@ -1766,7 +1746,6 @@ window.addEventListener('DOMContentLoaded', function () {
     tap.start(t); tap.stop(t + 0.05);
   }
 
-  /* 舍克雷：葫芦沙锤，串珠网"沙沙"两连击 */
   function playShekere(t, dest, vel) {
     var out = voiceBus(dest, vel);
     [[0, 0.32], [0.09, 0.22]].forEach(function (hit) {
@@ -1783,7 +1762,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 卡林巴：非洲拇指琴，金属簧片拨奏，泛音列 1 / 3.9 */
   function playKalimba(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 523.25;
@@ -1812,7 +1790,6 @@ window.addEventListener('DOMContentLoaded', function () {
     pluck.start(t); pluck.stop(t + 0.03);
   }
 
-  /* 木琴：西方木质琴键，明亮短促，泛音 1 / 4 */
   function playXylo(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 880;
@@ -1831,7 +1808,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 沙锤：比舍克雷更高更脆的摇奏 */
   function playMaracas(t, dest, vel) {
     var out = voiceBus(dest, vel);
     [[0, 0.28], [0.07, 0.2]].forEach(function (hit) {
@@ -1848,7 +1824,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 牛铃：金属空心 clang，非谐泛音 */
   function playCowbell(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 620;
@@ -1870,7 +1845,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 踩镲：极短高频金属 chick */
   function playHihat(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var sh = audioCtx.createBufferSource();
@@ -1884,7 +1858,6 @@ window.addEventListener('DOMContentLoaded', function () {
     sh.start(t); sh.stop(t + 0.07);
   }
 
-  /* 乌杜鼓：非洲陶罐鼓，深沉带 pitch drop 的 "boing" */
   function playUdu(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 48;
@@ -1904,7 +1877,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 巴拉风：非洲木琴，葫芦共鸣的温暖木质音 */
   function playBalafon(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = 392;
@@ -1923,7 +1895,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 阿戈戈：双音金属铃，高低交替 */
   function playAgogo(t, dest, vel) {
     var out = voiceBus(dest, vel);
     var base = playAgogo._hi ? 880 : 660;
@@ -1944,7 +1915,6 @@ window.addEventListener('DOMContentLoaded', function () {
   }
   playAgogo._hi = true;
 
-  /* 卡萨卡：葫芦摇奏，比舍克雷更柔 */
   function playKashaka(t, dest, vel) {
     var out = voiceBus(dest, vel);
     [[0, 0.22], [0.08, 0.16]].forEach(function (hit) {
@@ -2001,7 +1971,6 @@ window.addEventListener('DOMContentLoaded', function () {
     else if (PLAYERS[id]) PLAYERS[id](t, dest, vel);
   }
 
-  /* 模式切换 */
   var viewMuyu = document.getElementById("view-muyu");
   var viewSeq = document.getElementById("view-seq");
   var viewDuo = document.getElementById("view-duo");
@@ -2024,7 +1993,6 @@ window.addEventListener('DOMContentLoaded', function () {
   modeSeqBtn.addEventListener("click", function () { setView("seq"); });
   modeDuoBtn.addEventListener("click", function () { setView("duo"); });
 
-  /* ---------- 敲木鱼 ---------- */
   var muyuFish = document.getElementById("muyuFish");
   var muyuStage = document.getElementById("muyuStage");
   var meritTotalEl = document.getElementById("meritTotal");
@@ -2046,7 +2014,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var s = document.createElement("span");
     s.className = "float-plus";
     s.textContent = "功德 +1";
-    /* 随机左右偏移，避免连击时重叠 */
+
     s.style.marginLeft = (Math.random() * 70 - 35) + "px";
     (stage || muyuStage).appendChild(s);
     s.addEventListener("animationend", function () { s.remove(); });
@@ -2063,7 +2031,6 @@ window.addEventListener('DOMContentLoaded', function () {
     s.addEventListener("animationend", function () { s.remove(); });
   }
 
-  /* 木鱼图缺失时回退为素色鼓面，不影响敲击 */
   var muyuImg = muyuFish.querySelector("img");
   if (muyuImg) {
     muyuImg.addEventListener("error", function () {
@@ -2072,7 +2039,6 @@ window.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* 木槌视觉落点在动画 40%（0.62s × 40% ≈ 0.25s），声音/鱼身震动/冲击波延迟同步，听感与视觉合一 */
   function gainMerit() {
     var m = state.merit;
     var t = todayStr();
@@ -2097,11 +2063,11 @@ window.addEventListener('DOMContentLoaded', function () {
     var m = gainMerit();
     floatPlusOne(muyuStage);
     triggerPulse(muyuFish);
-    /* 木槌动画立即起跑（先蓄力上扬再砸下） */
+
     muyuMallet.classList.remove("hit");
     void muyuMallet.offsetWidth;
     muyuMallet.classList.add("hit");
-    /* 落点时刻再出声 + 鱼身微震 + 冲击波纹 */
+
     setTimeout(function () {
       try { playSound("wood", knockCtx.currentTime, 1.0); } catch (e) {}
       muyuFish.classList.remove("thump");
@@ -2118,7 +2084,6 @@ window.addEventListener('DOMContentLoaded', function () {
   });
   muyuFish.addEventListener("click", function (e) { if (e.detail === 0) knockMuyu(); });
 
-  /* ---------- 磬页 ---------- */
   var qingStage = document.getElementById("qingStage");
   var qingStone = document.getElementById("qingStone");
   var qingMallet = document.getElementById("qingMallet");
@@ -2137,7 +2102,6 @@ window.addEventListener('DOMContentLoaded', function () {
   qingMallet.addEventListener("animationend", function () { qingMallet.classList.remove("tap"); });
   qingStone.addEventListener("animationend", function () { qingStone.classList.remove("sway"); });
 
-  /* 磬槌落点在动画 48%（0.9s × 48% ≈ 0.43s），轻声 + 微晃 + 柔波纹同步 */
   var QING_IMPACT_DELAY = 420;
   function knockQing() {
     ensureAudio();
@@ -2172,7 +2136,6 @@ window.addEventListener('DOMContentLoaded', function () {
     toast("功德已清零，重新积攒");
   });
 
-  /* 功德海报：canvas 生成，可分享可下载 */
   document.getElementById("posterBtn").addEventListener("click", function () {
     var m = state.merit;
     var W = 900, H = 1200;
@@ -2191,7 +2154,7 @@ window.addEventListener('DOMContentLoaded', function () {
     g.fillStyle = "#9a8e68";
     g.font = "40px Songti SC, STSong, serif";
     g.fillText("日行一善 · 功德无量", W / 2, 300);
-    /* 木鱼简形 */
+
     g.fillStyle = "#8a5a32";
     g.beginPath(); g.arc(W / 2, 560, 130, 0, Math.PI * 2); g.fill();
     g.fillStyle = "rgba(30,18,8,0.55)";
@@ -2225,7 +2188,6 @@ window.addEventListener('DOMContentLoaded', function () {
     }, "image/png");
   });
 
-  /* ---------- 鼓垫（图片 + CSS 回退） ---------- */
   var padsEl = document.getElementById("pads");
   var padElsById = {};
   var keyToPad = {};
@@ -2262,7 +2224,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var btn = document.createElement("button");
     btn.className = "pad " + p.shape + (p.region ? " " + p.region : "");
     btn.setAttribute("aria-label", p.label);
-    /* 图片优先：images/icon-<id>.webp；缺图/加载失败时自动脱落，露出 CSS 绘制的编号 */
+
     var img = document.createElement("img");
     img.src = "images/icon-" + p.id + ".webp";
     img.alt = p.label;
@@ -2316,7 +2278,6 @@ window.addEventListener('DOMContentLoaded', function () {
     activePointerPad = {};
   });
 
-  /* ---------- 创作与曲谱 ---------- */
   var composeBtn = document.getElementById("composeBtn");
   var scoreStrip = document.getElementById("scoreStrip");
   var scoreCount = document.getElementById("scoreCount");
@@ -2342,7 +2303,6 @@ window.addEventListener('DOMContentLoaded', function () {
   }
   composeBtn.addEventListener("click", function () { setCompose(!isCompose); });
 
-  /* 创作模式下鼓垫每次击发记一笔；步进器/预置走 playSound 直发，天然写不进来 */
   function writeScore(id) {
     if (!isCompose || scorePlaying) return;
     if (state.score.length >= SCORE_MAX) { toast("曲谱已满（" + SCORE_MAX + " 个音）"); return; }
@@ -2428,7 +2388,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
   renderScore();
 
-  /* Mixer */
   var mixerGrid = document.getElementById("mixerGrid");
 
   function addSlider(container, cls, labelText, min, max, step, value, fmt, onInput) {
@@ -2479,7 +2438,6 @@ window.addEventListener('DOMContentLoaded', function () {
     function (v) { return v.toFixed(2) + "×"; },
     function (v) { state.bellDecay = v; persist(); });
 
-  /* Slots */
   var slotsEl = document.getElementById("slots");
   var slotButtons = [];
   SLOT_NAMES.forEach(function (name, idx) {
@@ -2497,7 +2455,6 @@ window.addEventListener('DOMContentLoaded', function () {
     slotButtons.push(btn);
   });
 
-  /* Swing / Humanize */
   var swingInput = document.getElementById("swing");
   var swingVal = document.getElementById("swingVal");
   swingInput.value = state.swing;
@@ -2516,7 +2473,6 @@ window.addEventListener('DOMContentLoaded', function () {
     persist();
   });
 
-  /* 预置锣鼓点：按类型筛选 */
   var presetScroll = document.getElementById("presetScroll");
   var presetTabs = document.getElementById("presetTabs");
   var PRESET_TYPES = ["全部", "道教", "佛教", "中国传统", "国风", "军乐", "西方流行", "非洲流行"];
@@ -2565,7 +2521,6 @@ window.addEventListener('DOMContentLoaded', function () {
   });
   renderPresets();
 
-  /* Sequencer */
   var seqEl = document.getElementById("sequencer");
   var seqScroll = document.getElementById("seqScroll");
   var seqWrap = document.getElementById("seqWrap");
@@ -2633,7 +2588,6 @@ window.addEventListener('DOMContentLoaded', function () {
   window.addEventListener("orientationchange", applyOrientation);
   window.matchMedia("(orientation: landscape)").addEventListener("change", applyOrientation);
 
-  /* Transport */
   var isPlaying = false;
   var currentStep = 0;
   var nextStepTime = 0;
@@ -2774,7 +2728,6 @@ window.addEventListener('DOMContentLoaded', function () {
     persist();
   });
 
-  /* 初始化 */
   setView(state.view === "seq" ? "seq" : "muyu");
   renderMerit();
 })();
