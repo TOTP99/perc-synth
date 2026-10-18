@@ -39,12 +39,23 @@
         var r = ctxRef.resume();
         if (r && r.catch) r.catch(function () {});
       }
+      /* 强制解锁：静音缓冲走一遍，iOS 经典手法 */
+      if (ctxRef && ctxRef.state === 'running') {
+        try {
+          var src = ctxRef.createBufferSource();
+          src.buffer = ctxRef.createBuffer(1, 1, ctxRef.sampleRate || 44100);
+          src.connect(ctxRef.destination);
+          src.start(0);
+        } catch (e) {}
+      }
     } catch (e) {}
+    refreshDot();
   }
 
   /* 让主脚本把它的 ctx 登记进来（initAudioGraph 里调） */
   function registerCtx(ctx) {
     if (ctx) ctxRef = ctx;
+    refreshDot();
   }
 
   /* 在 masterGain 后插入音质链。调用后 masterGain 的输出走新链。 */
@@ -119,4 +130,36 @@
     enhanceChain: enhanceChain,
     isUnlocked: function () { return !!ctxRef && ctxRef.state === 'running'; }
   };
+
+  /* 右下角状态灯：灰=本文件未加载（由 index.html 兜底显示），
+   * 橙=已加载但未解锁，绿=已解锁正常。手机上肉眼可见。 */
+  function refreshDot() {
+    try {
+      var dot = document.getElementById('percFxDot');
+      if (!dot) return;
+      dot.style.background = (ctxRef && ctxRef.state === 'running') ? '#4caf50' : '#ff9800';
+    } catch (e) {}
+  }
+  function mountDot() {
+    try {
+      if (document.getElementById('percFxDot')) { refreshDot(); return; }
+      var dot = document.createElement('div');
+      dot.id = 'percFxDot';
+      dot.style.cssText = 'position:fixed;right:10px;bottom:10px;width:22px;height:22px;'
+        + 'border-radius:50%;background:#ff9800;z-index:9999;opacity:.75;cursor:pointer;';
+      dot.title = '点我强制解锁音频';
+      /* 点圆点=强制解锁：真实手势内 resume+静音缓冲；
+       * 事件冒泡到 document 还会触发主脚本的 ensureAudio() */
+      dot.addEventListener('click', function () { ensureResumed(); }, { passive: true });
+      var add = function () {
+        try { document.body.appendChild(dot); } catch (e) {}
+        refreshDot();
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', add);
+      } else { add(); }
+      setInterval(refreshDot, 2000);
+    } catch (e) {}
+  }
+  mountDot();
 })();

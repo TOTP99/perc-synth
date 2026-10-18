@@ -818,6 +818,20 @@
   <div class="toast" id="toast"></div>
 
 <script src="audio-fx.js"></script>
+<script>/* audio-fx.js 缺失兜底：右下角灰灯 */
+window.addEventListener('DOMContentLoaded', function () {
+  try {
+    if (typeof window.PercFX === 'undefined' && !document.getElementById('percFxDot')) {
+      var d = document.createElement('div');
+      d.id = 'percFxDot';
+      d.style.cssText = 'position:fixed;right:10px;bottom:10px;width:22px;height:22px;'
+        + 'border-radius:50%;background:#888;z-index:9999;opacity:.75;cursor:pointer;';
+      d.title = 'audio-fx.js 未加载，点我尝试解锁';
+      document.body.appendChild(d);
+    }
+  } catch (e) {}
+});
+</script>
 <script src="presets.js"></script>
 <script>
 (function () {
