@@ -660,11 +660,11 @@
   .seq-subpanel { display: none; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 2px 2px 8px; }
   .seq-subpanel.on { display: flex; flex-direction: column; }
 
-  /* 鼓垫：8 列紧凑 */
-  #sub-pads .pads { grid-template-columns: repeat(8, 1fr); gap: 6px; }
-  #sub-pads .pad { aspect-ratio: 0.85; border-radius: 8px; }
-  #sub-pads .pad .num { font-size: 13px; }
-  #sub-pads .pad .name { font-size: 8px; }
+  /* 鼓垫：4 列大图 */
+  #sub-pads .pads { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  #sub-pads .pad { aspect-ratio: 1; border-radius: 12px; }
+  #sub-pads .pad .num { font-size: 19px; }
+  #sub-pads .pad .name { font-size: 9px; }
   .seq-hint { text-align: center; font-size: 10px; color: var(--text-dim); margin: 8px 0 0; letter-spacing: 0.1em; }
 
   /* 乐曲：分类横滑 + 双列 */
@@ -676,7 +676,8 @@
   .arrange-tools { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
   .arrange-tools .ghost-btn { padding: 6px 12px; font-size: 11px; }
   .arrange-tools .feel-wrap { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
-  #sub-arrange .seq-scroll { flex: 1 1 auto; min-height: 120px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  #sub-arrange .seq-scroll { flex: 1 1 auto; min-height: 120px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; touch-action: none; cursor: grab; }
+  #sub-arrange .seq-scroll.dragging { cursor: grabbing; }
   #sub-arrange .sequencer { grid-template-columns: 40px repeat(16, minmax(18px, 1fr)); gap: 2px; min-width: 420px; padding: 6px; }
   #sub-arrange .step { height: 18px; }
   #sub-arrange .row-label { font-size: 8px; }
@@ -2672,6 +2673,58 @@ window.addEventListener('DOMContentLoaded', function () {
   }
   seqScroll.addEventListener("scroll", updateScrollFade);
   window.addEventListener("resize", updateScrollFade);
+
+  /* 手指按住任意位置自由拖拽平移（上下左右）；轻点则正常开关格子 */
+  (function () {
+    var sx = 0, sy = 0, ssl = 0, sst = 0, dragging = false, suppressClick = false;
+    function start(x, y) {
+      sx = x; sy = y; ssl = seqScroll.scrollLeft; sst = seqScroll.scrollTop;
+      dragging = false;
+    }
+    function move(x, y, e) {
+      var dx = x - sx, dy = y - sy;
+      if (!dragging && Math.hypot(dx, dy) > 8) {
+        dragging = true;
+        seqScroll.classList.add("dragging");
+      }
+      if (dragging) {
+        if (e && e.cancelable) e.preventDefault();
+        seqScroll.scrollLeft = ssl - dx;
+        seqScroll.scrollTop = sst - dy;
+      }
+    }
+    function end() {
+      seqScroll.classList.remove("dragging");
+      if (dragging) suppressClick = true;
+      dragging = false;
+    }
+    seqScroll.addEventListener("touchstart", function (e) {
+      var t = e.touches[0];
+      start(t.clientX, t.clientY);
+    }, { passive: true });
+    seqScroll.addEventListener("touchmove", function (e) {
+      var t = e.touches[0];
+      move(t.clientX, t.clientY, e);
+    }, { passive: false });
+    seqScroll.addEventListener("touchend", end, { passive: true });
+    seqScroll.addEventListener("touchcancel", end, { passive: true });
+    /* 鼠标也支持拖拽（桌面调试用） */
+    seqScroll.addEventListener("mousedown", function (e) {
+      start(e.clientX, e.clientY);
+    });
+    window.addEventListener("mousemove", function (e) {
+      if (e.buttons) move(e.clientX, e.clientY, e);
+    });
+    window.addEventListener("mouseup", end);
+    /* 拖拽后吞掉那次点击，防止误触开关格子 */
+    seqScroll.addEventListener("click", function (e) {
+      if (suppressClick) {
+        e.preventDefault();
+        e.stopPropagation();
+        suppressClick = false;
+      }
+    }, true);
+  })();
 
   function applyOrientation() {
     var landscape = window.matchMedia("(orientation: landscape)").matches;
