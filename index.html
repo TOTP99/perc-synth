@@ -255,7 +255,10 @@
     box-shadow: inset 0 1px 2px rgba(255,220,160,.4), 0 2px 4px rgba(0,0,0,.5);
   }
   .mallet-head {
-    position: absolute; left: 24px; top: 98px; width: 40px; height: 40px; border-radius: 50%;
+    /* 槌头长在柄的打击端（左端），随柄一起转动，像真槌子 */
+    position: absolute; left: -30px; top: 50%;
+    transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%;
     background:
       repeating-linear-gradient(45deg, rgba(120,100,80,.14) 0 3px, transparent 3px 6px),
       radial-gradient(circle at 35% 30%, #f7f1e5, #d9cfbc 55%, #ab9d84);
@@ -699,8 +702,7 @@
               </div>
               <div class="mallet-wrap" aria-hidden="true">
                 <div class="mallet" id="muyuMallet">
-                  <div class="mallet-handle"></div>
-                  <div class="mallet-head"></div>
+                  <div class="mallet-handle"><div class="mallet-head"></div></div>
                 </div>
               </div>
             </div>
@@ -742,8 +744,7 @@
               </button>
               <div class="mallet-wrap qing-mallet-wrap" aria-hidden="true">
                 <div class="mallet qing-mallet" id="qingMallet">
-                  <div class="mallet-handle"></div>
-                  <div class="mallet-head"></div>
+                  <div class="mallet-handle"><div class="mallet-head"></div></div>
                 </div>
               </div>
             </div>
