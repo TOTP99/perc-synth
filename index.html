@@ -856,7 +856,15 @@
     { id: "djembe",    label: "金贝鼓", shape: "drum", region: "afr",          key: "A" },
     { id: "talkdrum",  label: "谈话鼓", shape: "drum", region: "afr",          key: "S" },
     { id: "shekere",   label: "舍克雷", shape: "bell", region: "afr",          key: "D" },
-    { id: "kalimba",   label: "卡林巴", shape: "bell", region: "afr",          key: "F" }
+    { id: "kalimba",   label: "卡林巴", shape: "bell", region: "afr",          key: "F" },
+    { id: "xylo",      label: "木琴",   shape: "bell", region: "west",         key: "G" },
+    { id: "maracas",   label: "沙锤",   shape: "bell", region: "west",         key: "H" },
+    { id: "cowbell",   label: "牛铃",   shape: "bell", region: "west",         key: "J" },
+    { id: "hihat",     label: "踩镲",   shape: "bell", region: "west",         key: "K" },
+    { id: "udu",       label: "乌杜鼓", shape: "drum", region: "afr",          key: "Z" },
+    { id: "balafon",   label: "巴拉风", shape: "bell", region: "afr",          key: "X" },
+    { id: "agogo",     label: "阿戈戈", shape: "bell", region: "afr",          key: "C" },
+    { id: "kashaka",   label: "卡萨卡", shape: "bell", region: "afr",          key: "V" }
   ];
 
   var TRACK_BY_ID = {};
@@ -1790,6 +1798,155 @@
     pluck.start(t); pluck.stop(t + 0.03);
   }
 
+  /* 木琴：西方木质琴键，明亮短促，泛音 1 / 4 */
+  function playXylo(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 880;
+    [
+      { r: 1, d: 0.35, g: 0.5 },
+      { r: 4, d: 0.12, g: 0.18 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = base * p.r;
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.g, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.d);
+      osc.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.d + 0.05);
+    });
+  }
+
+  /* 沙锤：比舍克雷更高更脆的摇奏 */
+  function playMaracas(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    [[0, 0.28], [0.07, 0.2]].forEach(function (hit) {
+      var sh = audioCtx.createBufferSource();
+      sh.buffer = noiseBuf;
+      var sf = audioCtx.createBiquadFilter();
+      sf.type = "bandpass"; sf.frequency.value = 5200; sf.Q.value = 0.7;
+      var sg = audioCtx.createGain();
+      var t0 = t + hit[0];
+      sg.gain.setValueAtTime(hit[1], t0);
+      sg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08);
+      sh.connect(sf); sf.connect(sg); sg.connect(out);
+      sh.start(t0); sh.stop(t0 + 0.1);
+    });
+  }
+
+  /* 牛铃：金属空心 clang，非谐泛音 */
+  function playCowbell(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 620;
+    [
+      { r: 1.00, g: 0.4, d: 0.25 },
+      { r: 1.49, g: 0.25, d: 0.18 },
+      { r: 2.24, g: 0.15, d: 0.12 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "square";
+      osc.frequency.value = base * p.r;
+      var f = audioCtx.createBiquadFilter();
+      f.type = "bandpass"; f.frequency.value = base * p.r; f.Q.value = 3;
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.g * 0.4, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.d);
+      osc.connect(f); f.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.d + 0.05);
+    });
+  }
+
+  /* 踩镲：极短高频金属 chick */
+  function playHihat(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var sh = audioCtx.createBufferSource();
+    sh.buffer = noiseBuf;
+    var sf = audioCtx.createBiquadFilter();
+    sf.type = "highpass"; sf.frequency.value = 7500;
+    var sg = audioCtx.createGain();
+    sg.gain.setValueAtTime(0.35, t);
+    sg.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    sh.connect(sf); sf.connect(sg); sg.connect(out);
+    sh.start(t); sh.stop(t + 0.07);
+  }
+
+  /* 乌杜鼓：非洲陶罐鼓，深沉带 pitch drop 的 "boing" */
+  function playUdu(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 48;
+    [
+      { r: 1.00, d: 0.6, g: 0.7 },
+      { r: 2.02, d: 0.25, g: 0.2 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(base * p.r * 1.8, t);
+      osc.frequency.exponentialRampToValueAtTime(base * p.r, t + 0.15);
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.g * 0.5, t);
+      g.gain.exponentialRampToValueAtTime(0.0006, t + p.d);
+      osc.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.d + 0.05);
+    });
+  }
+
+  /* 巴拉风：非洲木琴，葫芦共鸣的温暖木质音 */
+  function playBalafon(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = 392;
+    [
+      { r: 1, d: 0.5, g: 0.5 },
+      { r: 2.76, d: 0.2, g: 0.15 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.value = base * p.r;
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.g, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.d);
+      osc.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.d + 0.05);
+    });
+  }
+
+  /* 阿戈戈：双音金属铃，高低交替 */
+  function playAgogo(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    var base = playAgogo._hi ? 880 : 660;
+    playAgogo._hi = !playAgogo._hi;
+    [
+      { r: 1, g: 0.4, d: 0.3 },
+      { r: 2.4, g: 0.15, d: 0.15 }
+    ].forEach(function (p) {
+      var osc = audioCtx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = base * p.r;
+      var g = audioCtx.createGain();
+      g.gain.setValueAtTime(p.g, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.d);
+      osc.connect(g); g.connect(out);
+      osc.start(t); osc.stop(t + p.d + 0.05);
+    });
+  }
+  playAgogo._hi = true;
+
+  /* 卡萨卡：葫芦摇奏，比舍克雷更柔 */
+  function playKashaka(t, dest, vel) {
+    var out = voiceBus(dest, vel);
+    [[0, 0.22], [0.08, 0.16]].forEach(function (hit) {
+      var sh = audioCtx.createBufferSource();
+      sh.buffer = noiseBuf;
+      var sf = audioCtx.createBiquadFilter();
+      sf.type = "bandpass"; sf.frequency.value = 2400; sf.Q.value = 0.8;
+      var sg = audioCtx.createGain();
+      var t0 = t + hit[0];
+      sg.gain.setValueAtTime(hit[1], t0);
+      sg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.12);
+      sh.connect(sf); sf.connect(sg); sg.connect(out);
+      sh.start(t0); sh.stop(t0 + 0.14);
+    });
+  }
+
   var PLAYERS = {
     kick: playKick,
     snare: playSnare,
@@ -1811,7 +1968,15 @@
     djembe: playDjembe,
     talkdrum: playTalkdrum,
     shekere: playShekere,
-    kalimba: playKalimba
+    kalimba: playKalimba,
+    xylo: playXylo,
+    maracas: playMaracas,
+    cowbell: playCowbell,
+    hihat: playHihat,
+    udu: playUdu,
+    balafon: playBalafon,
+    agogo: playAgogo,
+    kashaka: playKashaka
   };
 
   function playSound(id, t, vel) {
