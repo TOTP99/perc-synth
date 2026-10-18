@@ -618,6 +618,81 @@
     body { padding: 8px 4px 14px; }
     .unit { padding: 10px 6px 8px; }
   }
+
+  /* ===== 编曲视图：整页不滚，二级切换（商用紧凑版式） ===== */
+  #view-seq {
+    display: flex; flex-direction: column; min-height: 0;
+    height: calc(var(--app-height, 100dvh) - 256px);
+    min-height: 460px;
+  }
+  #view-seq[hidden] { display: none; }
+
+  .seq-transport {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; margin-bottom: 8px;
+    background: linear-gradient(180deg, var(--panel-1), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .seq-transport .tempo-wrap { flex: 1 1 auto; display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .seq-transport .tempo-wrap input { flex: 1 1 auto; min-width: 0; }
+  .seq-transport #tempoVal { font-size: 11px; color: var(--bronze-high); white-space: nowrap; }
+  .seq-transport .slots { display: flex; gap: 4px; }
+  .seq-transport .slots button {
+    width: 30px; height: 30px; border-radius: 8px; font-size: 12px;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text-dim);
+  }
+  .seq-transport .slots button.on {
+    background: linear-gradient(180deg, var(--bronze-high), var(--bronze-mid));
+    color: #1a0f06; border-color: var(--bronze-mid); font-weight: 700;
+  }
+
+  .seq-subtabs {
+    flex: 0 0 auto; display: flex; gap: 2px; padding: 0 2px;
+    border-bottom: 1px solid var(--border); margin-bottom: 8px;
+  }
+  .seq-subtab {
+    flex: 1 1 0; padding: 9px 0 8px; background: none; border: none;
+    font-size: 13px; letter-spacing: 0.2em; text-indent: 0.2em; color: var(--text-dim);
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .seq-subtab.on { color: var(--bronze-high); border-bottom-color: var(--bronze-mid); font-weight: 700; }
+
+  .seq-subpanel { display: none; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 2px 2px 8px; }
+  .seq-subpanel.on { display: flex; flex-direction: column; }
+
+  /* 鼓垫：8 列紧凑 */
+  #sub-pads .pads { grid-template-columns: repeat(8, 1fr); gap: 6px; }
+  #sub-pads .pad { aspect-ratio: 0.85; border-radius: 8px; }
+  #sub-pads .pad .num { font-size: 13px; }
+  #sub-pads .pad .name { font-size: 8px; }
+  .seq-hint { text-align: center; font-size: 10px; color: var(--text-dim); margin: 8px 0 0; letter-spacing: 0.1em; }
+
+  /* 乐曲：分类横滑 + 双列 */
+  #sub-presets .preset-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; flex: 0 0 auto; }
+  #sub-presets .preset-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; overflow: visible; }
+  #sub-presets .preset-chip { flex-shrink: 1; min-width: 0; padding: 7px 10px 7px 14px; }
+
+  /* 编曲：工具行 + 网格 + 曲谱 */
+  .arrange-tools { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .arrange-tools .ghost-btn { padding: 6px 12px; font-size: 11px; }
+  .arrange-tools .feel-wrap { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+  #sub-arrange .seq-scroll { flex: 1 1 auto; min-height: 120px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  #sub-arrange .sequencer { grid-template-columns: 40px repeat(16, minmax(18px, 1fr)); gap: 2px; min-width: 420px; padding: 6px; }
+  #sub-arrange .step { height: 18px; }
+  #sub-arrange .row-label { font-size: 8px; }
+  .score-strip {
+    flex: 0 0 auto; display: flex; gap: 4px; overflow-x: auto; padding: 8px 2px 4px;
+    min-height: 34px;
+  }
+  .score-hint { font-size: 10px; color: var(--text-dim); margin: 0 0 4px; text-align: center; }
+  .score-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+  .score-actions #scoreCount { font-size: 11px; color: var(--text-dim); margin-right: auto; }
+  .score-actions .ghost-btn { padding: 6px 12px; font-size: 11px; }
+
+  /* 混音：双列紧凑 */
+  #sub-mixer .mixer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; align-content: start; }
+  #sub-mixer .mixer-row { grid-template-columns: 44px 1fr 26px; gap: 4px; }
+  #sub-mixer .mixer-divider { grid-column: 1 / -1; }
 </style>
 </head>
 <body>
@@ -753,59 +828,58 @@
 
     <!-- 钟鼓乐（编曲器） -->
     <section id="view-seq" hidden>
-      <section class="panel pads-panel">
-        <p class="section-label">即兴 — 点击或按键 1–12</p>
-        <div class="pads" id="pads"></div>
-      </section>
-
-      <div class="panel transport">
+      <div class="seq-transport">
         <button id="playBtn" aria-label="播放">▶</button>
         <button class="ghost-btn btn3d" id="composeBtn" aria-label="创作">创作</button>
         <div class="tempo-wrap">
-          <label for="tempo">速度</label>
-          <input type="range" id="tempo" min="60" max="168" value="96">
-          <span id="tempoVal">96 拍/分</span>
+          <input type="range" id="tempo" min="60" max="168" value="96" aria-label="速度">
+          <span id="tempoVal">96</span>
         </div>
+        <div class="slots" id="slots"></div>
       </div>
 
-      <div class="panel">
-        <p class="section-label">锣鼓点 — 点一下载入当前图案</p>
+      <div class="seq-subtabs" id="seqSubtabs">
+        <button class="seq-subtab on" data-sub="pads">鼓垫</button>
+        <button class="seq-subtab" data-sub="presets">乐曲</button>
+        <button class="seq-subtab" data-sub="arrange">编曲</button>
+        <button class="seq-subtab" data-sub="mixer">混音</button>
+      </div>
+
+      <div class="seq-subpanel on" id="sub-pads">
+        <div class="pads" id="pads"></div>
+        <p class="seq-hint">点击或按键发声 · 长按滚奏</p>
+      </div>
+
+      <div class="seq-subpanel" id="sub-presets">
         <div class="preset-tabs" id="presetTabs"></div>
         <div class="preset-scroll" id="presetScroll"></div>
       </div>
 
-      <div class="panel subrow">
-        <div class="slots" id="slots"></div>
-        <span class="sub-gap"></span>
-        <button class="ghost-btn btn3d" id="randomBtn">随机</button>
-        <button class="ghost-btn btn3d" id="clearBtn">清空</button>
-        <button class="ghost-btn btn3d" id="humanizeBtn">灵感</button>
-        <div class="feel-wrap">
-          <label for="swing">律动</label>
-          <input type="range" id="swing" min="0" max="50" value="0">
-          <span id="swingVal">0%</span>
+      <div class="seq-subpanel" id="sub-arrange">
+        <div class="arrange-tools">
+          <button class="ghost-btn btn3d" id="randomBtn">随机</button>
+          <button class="ghost-btn btn3d" id="clearBtn">清空</button>
+          <button class="ghost-btn btn3d" id="humanizeBtn">灵感</button>
+          <div class="feel-wrap">
+            <label for="swing">律动</label>
+            <input type="range" id="swing" min="0" max="50" value="0">
+            <span id="swingVal">0%</span>
+          </div>
         </div>
-      </div>
-
-      <div class="panel">
-        <p class="section-label">曲谱 <span id="scoreCount"></span></p>
-        <div class="score-strip" id="scoreStrip" aria-label="曲谱"></div>
-        <div class="score-actions">
-          <button class="ghost-btn btn3d" id="scorePlayBtn">播放曲谱</button>
-          <button class="ghost-btn btn3d" id="scoreClearBtn">清空曲谱</button>
-        </div>
-        <p class="score-hint" id="scoreHint">点「创作」后敲鼓垫，音符会记在这里</p>
-      </div>
-
-      <details class="panel mixer">
-        <summary>混音与音色</summary>
-        <div class="mixer-grid" id="mixerGrid"></div>
-      </details>
-
-      <div class="panel seq-wrap" id="seqWrap">
         <div class="seq-scroll" id="seqScroll">
           <div class="sequencer" id="sequencer"></div>
         </div>
+        <div class="score-strip" id="scoreStrip" aria-label="曲谱"></div>
+        <p class="score-hint" id="scoreHint">点「创作」后敲鼓垫，音符会记在这里</p>
+        <div class="score-actions">
+          <span id="scoreCount"></span>
+          <button class="ghost-btn btn3d" id="scorePlayBtn">播放曲谱</button>
+          <button class="ghost-btn btn3d" id="scoreClearBtn">清空</button>
+        </div>
+      </div>
+
+      <div class="seq-subpanel" id="sub-mixer">
+        <div class="mixer-grid" id="mixerGrid"></div>
       </div>
     </section>
   </div>
@@ -814,6 +888,20 @@
   <div class="toast" id="toast"></div>
 
 <script src="audio-fx.js"></script>
+<script>
+/* 实测视口高度（iOS 不用 vh）：供 #view-seq 定高 */
+(function () {
+  function sync() {
+    try {
+      var h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      document.documentElement.style.setProperty('--app-height', h + 'px');
+    } catch (e) {}
+  }
+  window.addEventListener('resize', sync);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', sync);
+  sync();
+})();
+</script>
 <script>
 window.addEventListener('DOMContentLoaded', function () {
   try {
@@ -1993,6 +2081,17 @@ window.addEventListener('DOMContentLoaded', function () {
   modeSeqBtn.addEventListener("click", function () { setView("seq"); });
   modeDuoBtn.addEventListener("click", function () { setView("duo"); });
 
+  /* 编曲视图二级切换：鼓垫 / 乐曲 / 编曲 / 混音 */
+  var subTabs = document.querySelectorAll("#seqSubtabs .seq-subtab");
+  subTabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      subTabs.forEach(function (t) { t.classList.toggle("on", t === tab); });
+      document.querySelectorAll(".seq-subpanel").forEach(function (p) {
+        p.classList.toggle("on", p.id === "sub-" + tab.dataset.sub);
+      });
+    });
+  });
+
   var muyuFish = document.getElementById("muyuFish");
   var muyuStage = document.getElementById("muyuStage");
   var meritTotalEl = document.getElementById("meritTotal");
@@ -2523,7 +2622,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
   var seqEl = document.getElementById("sequencer");
   var seqScroll = document.getElementById("seqScroll");
-  var seqWrap = document.getElementById("seqWrap");
+  var seqWrap = document.getElementById("sub-arrange");
   var stepEls = {};
   var playBtn = document.getElementById("playBtn");
   var tempoInput = document.getElementById("tempo");
